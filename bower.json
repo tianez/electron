@@ -1,0 +1,26 @@
+{
+  "name": "electron",
+  "description": "",
+  "main": "app.js",
+  "authors": [
+    "tianez <saber_tz@163.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "animate.css": "~3.5.0",
+    "font-awesome": "~4.5.0",
+    "normalize-css": "~4.0.0",
+    "jquery.uniform": "^2.2.0",
+    "pure": "^0.6.0",
+    "storedb": "^0.1.2"
+  }
+}

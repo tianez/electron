@@ -1,0 +1,83 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    font-family: '微软雅黑';
+    overflow-x: hidden;
+}
+.container {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+#header {
+    background: rgba(255,255,255,.9);
+    box-shadow: 0 2px 4px -1px #ddd;
+    z-index: 999;
+    height: 4rem;
+    .pure-menu-heading {
+        background: none;
+    }
+    .pure-menu-heading:hover {
+        color: #ee521c;
+    }
+    .pure-menu-link {
+        padding: 1rem 2rem;
+        line-height: 2rem;
+    }
+    .active {
+        color: #ee521c;
+        background: none;
+    }
+}
+#main {
+    .switch {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        padding: 4rem 1.5rem;
+    }
+    .switch-enter {
+        opacity: 0;
+        transform: translate(250px,0);
+        transform: translate3d(250px,0,0);
+    }
+    .switch-enter.switch-enter-active {
+        opacity: 1;
+        transform: translate(0,0);
+        transform: translate3d(0,0,0);
+        transition-property: transform, opacity;
+        transition-duration: 300ms;
+        transition-timing-function: cubic-bezier(0.175, 0.665, 0.320, 1), linear;
+    }
+    .switch-leave {
+        opacity: 1;
+        transform: translate(0,0,0);
+        transform: translate3d(0,0,0);
+        transition-property: transform, opacity;
+        transition-duration: 300ms;
+        transition-timing-function: cubic-bezier(0.175, 0.665, 0.320, 1), linear;
+    }
+    .switch-leave.switch-leave-active {
+        opacity: 0;
+        transform: translate(-250px,0);
+        transform: translate3d(-250px,0,0);
+    }
+    .pure-menu {
+        height: 40px;
+    }
+}
+
+#footer {
+    background: #111;
+    color: #7f8c8d;
+    line-height: 32px;
+    height: 32px;
+    padding: 0 20px;
+    position: fixed;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    z-index: 999;
+}
