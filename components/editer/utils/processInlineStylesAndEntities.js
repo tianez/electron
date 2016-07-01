@@ -41,10 +41,9 @@ let processInlineStylesAndEntities = function processInlineStylesAndEntities(inl
 
     // important to process in order, so sort
     let sortedInlineStyleRanges = sortBy(block.inlineStyleRanges, 'offset');
-
+console.log(sortedInlineStyleRanges);
     // map all the tag insertions we're going to do
     sortedInlineStyleRanges.forEach(function(range) {
-        console.log(range);
         let tag = inlineTagMap[range.style];
 console.log(tag);
         if (!tagInsertMap[range.offset]) {
