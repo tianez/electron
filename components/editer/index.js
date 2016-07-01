@@ -24,6 +24,7 @@ let Link = require('./components/Link')
 let EntityControls = require('./components/EntityControls')
 let InlineStyleControls = require('./components/InlineStyleControls')
 let BlockStyleControls = require('./components/BlockStyleControls')
+let ColorStyleControls = require('./components/ColorStyleControls')
 
 class BasicHtmlEditor extends React.Component {
     constructor(props) {
@@ -37,54 +38,20 @@ class BasicHtmlEditor extends React.Component {
             strategy: findEntities.bind(null, 'link'),
             component: Link
         }]);
-
+        this.focus = () => this.refs.editor.focus()
         this.ENTITY_CONTROLS = [{
-            label: 'Add Link',
+            label: 'Link',
+            icon: 'fa-link',
             action: this._addLink.bind(this)
         }, {
-            label: 'Remove Link',
+            label: 'unLink',
+            icon: 'fa-unLink',
             action: this._removeLink.bind(this)
-        }];
+        }, {
+            label: 'focus',
+            action: this.focus
+        }]
 
-        this.INLINE_STYLES = [{
-            label: 'Bold',
-            style: 'BOLD'
-        }, {
-            label: 'Italic',
-            style: 'ITALIC'
-        }, {
-            label: 'Underline',
-            style: 'UNDERLINE'
-        }, {
-            label: 'Monospace',
-            style: 'CODE'
-        }, {
-            label: 'Strikethrough',
-            style: 'STRIKETHROUGH'
-        }];
-
-        this.BLOCK_TYPES = [{
-            label: 'P',
-            style: 'unstyled'
-        }, {
-            label: 'H1',
-            style: 'header-one'
-        }, {
-            label: 'H2',
-            style: 'header-two'
-        }, {
-            label: 'Blockquote',
-            style: 'blockquote'
-        }, {
-            label: 'UL',
-            style: 'unordered-list-item'
-        }, {
-            label: 'OL',
-            style: 'ordered-list-item'
-        }, {
-            label: 'Code Block',
-            style: 'code-block'
-        }];
         this.state = {
             editorState: value ?
                 EditorState.createWithContent(
@@ -93,7 +60,7 @@ class BasicHtmlEditor extends React.Component {
                 ) : EditorState.createEmpty(decorator)
         };
 
-        // this.focus = () => this.refs.editor.focus();
+
         this.onChange = (editorState) => {
             let previousContent = this.state.editorState.getCurrentContent();
             this.setState({
@@ -117,6 +84,7 @@ class BasicHtmlEditor extends React.Component {
         this.handleKeyCommand = (command) => this._handleKeyCommand(command);
         this.toggleBlockType = (type) => this._toggleBlockType(type);
         this.toggleInlineStyle = (style) => this._toggleInlineStyle(style);
+        this.toggleColor = (toggledColor) => this._toggleColor(toggledColor);
         this.handleReturn = (e) => this._handleReturn(e);
         this.addLink = this._addLink.bind(this);
         this.removeLink = this._removeLink.bind(this);
@@ -152,12 +120,45 @@ class BasicHtmlEditor extends React.Component {
     }
 
     _toggleInlineStyle(inlineStyle) {
+        console.log(inlineStyle);
         this.onChange(
             RichUtils.toggleInlineStyle(
                 this.state.editorState,
                 inlineStyle
             )
         );
+    }
+
+    _toggleColor(toggledColor) {
+        const {
+            editorState
+        } = this.state;
+        const selection = editorState.getSelection();
+        // Let's just allow one color at a time. Turn off all active colors.
+        const nextContentState = Object.keys(styleMap)
+            .reduce((contentState, color) => {
+                return Modifier.removeInlineStyle(contentState, selection, color)
+            }, editorState.getCurrentContent());
+        let nextEditorState = EditorState.push(
+            editorState,
+            nextContentState,
+            'change-inline-style'
+        );
+        const currentStyle = editorState.getCurrentInlineStyle();
+        // Unset style override for current color.
+        if (selection.isCollapsed()) {
+            nextEditorState = currentStyle.reduce((state, color) => {
+                return RichUtils.toggleInlineStyle(state, color);
+            }, nextEditorState);
+        }
+        // If the color is being toggled on, apply it.
+        if (!currentStyle.has(toggledColor)) {
+            nextEditorState = RichUtils.toggleInlineStyle(
+                nextEditorState,
+                toggledColor
+            );
+        }
+        this.onChange(nextEditorState);
     }
 
     _addLineBreak( /* e */ ) {
@@ -239,6 +240,10 @@ class BasicHtmlEditor extends React.Component {
                     editorState: editorState,
                     entityControls: this.ENTITY_CONTROLS
                 }),
+                React.createElement(ColorStyleControls, {
+                    editorState: editorState,
+                    onToggle: this.toggleColor
+                }),
                 React.createElement('div', {
                         className: className
                     },
@@ -266,8 +271,29 @@ const styleMap = {
         fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
         fontSize: 16,
         padding: 2
-    }
-};
+    },
+    red: {
+        color: 'rgba(255, 0, 0, 1.0)',
+    },
+    orange: {
+        color: 'rgba(255, 127, 0, 1.0)',
+    },
+    yellow: {
+        color: 'rgba(180, 180, 0, 1.0)',
+    },
+    green: {
+        color: 'rgba(0, 180, 0, 1.0)',
+    },
+    blue: {
+        color: 'rgba(0, 0, 255, 1.0)',
+    },
+    indigo: {
+        color: 'rgba(75, 0, 130, 1.0)',
+    },
+    violet: {
+        color: 'rgba(127, 0, 255, 1.0)',
+    },
+}
 
 function getBlockStyle(block) {
     switch (block.getType()) {

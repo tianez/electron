@@ -8,10 +8,6 @@ const Editer = require('../components/editer')
 
 let html = `
   <h1>This is a Title1111112323223</h1>
-  <p>Here's some text, it's useful</p>
-  <p>More text, some inline <strong>styling</strong> for <em>some</em> elements</p>
-  <ul><li>sssssssssssssssssssssssss</li><li>sssssssssssssssssssssssss</li></ul>
-  <ol><li>sssssssssssssssssssssssss</li></ol>
 `;
 
 var Home = React.createClass({

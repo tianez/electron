@@ -1,5 +1,9 @@
 let StyleButton = require('./StyleButton')
 
+let Language = require('../config/Language')
+let local = 'zh_CN'
+let locals = Language[local]
+
 module.exports = function EntityControls(props) {
     let {
         entityControls
@@ -13,7 +17,8 @@ module.exports = function EntityControls(props) {
                 React.createElement(StyleButton, {
                     key: type.label,
                     active: currentStyle.has(type.style),
-                    label: type.label,
+                    label: locals[type.label] || type.label,
+                    icon: type.icon,
                     onToggle: type.action
                 })
             )

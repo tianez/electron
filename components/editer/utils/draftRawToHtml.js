@@ -2,7 +2,11 @@ let processInlineStylesAndEntities = require('./processInlineStylesAndEntities')
 
 let blockTagMap = {
   'header-one':               ['<h1>','</h1>\n'],
-  'header-two':               ['<h1>','</h1>\n'],
+  'header-two':               ['<h2>','</h2>\n'],
+  'header-three':             ['<h3>','</h3>\n'],
+  'header-four':              ['<h4>','</h4>\n'],
+  'header-five':              ['<h5>','</h5>\n'],
+  'header-six':               ['<h6>','</h6>\n'],
   'unstyled':                 ['<p>','</p>\n'],
   'code-block':               ['<pre><code>','</code></pre>\n'],
   'blockquote':               ['<blockquote>','</blockquote>\n'],
@@ -17,7 +21,8 @@ let inlineTagMap = {
   'UNDERLINE': ['<u>','</u>'],
   'CODE': ['<code>','</code>'],
   'STRIKETHROUGH': ['<del>', '</del>'],
-  'default': ['<span>','</span>']
+  'default': ['<span>','</span>'],
+  'orange': ['<font color="orange" >','</font>']
 };
 
 let entityTagMap = {
