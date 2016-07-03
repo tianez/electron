@@ -38,7 +38,12 @@ var Home = React.createClass({
                         value: html,
                         onChange: this.updateHtml
                     }),
-                    this.state.html
+                    React.createElement('div', {
+                        dangerouslySetInnerHTML: {
+                          __html:this.state.html
+                        }
+                    })
+
                     // React.createElement(Calendar, {
                     //     date: now => { //默认时间
                     //         // return now.add(-4, 'days')

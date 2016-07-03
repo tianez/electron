@@ -41,11 +41,21 @@ let processInlineStylesAndEntities = function processInlineStylesAndEntities(inl
 
     // important to process in order, so sort
     let sortedInlineStyleRanges = sortBy(block.inlineStyleRanges, 'offset');
-console.log(sortedInlineStyleRanges);
+    console.log(sortedInlineStyleRanges);
     // map all the tag insertions we're going to do
     sortedInlineStyleRanges.forEach(function(range) {
-        let tag = inlineTagMap[range.style];
-console.log(tag);
+        let tag
+        let patt1 = new RegExp("#")
+        if (patt1.test(range.style)) {
+            console.log(123);
+            tag = ['<span style="color:' + range.style + '">', '</span>']
+        } else {
+            console.log(232);
+            tag = inlineTagMap[range.style];
+        }
+        console.log(range.style);
+        // let tag = inlineTagMap[range.style];
+        console.log(tag);
         if (!tagInsertMap[range.offset]) {
             tagInsertMap[range.offset] = [];
         }

@@ -1,6 +1,6 @@
 'use strict'
 
-let debounce = require('lodash/debounce')
+const debounce = require('lodash/debounce')
 const {
     Editor,
     EditorState,
@@ -13,18 +13,30 @@ const {
     ContentState,
     Entity,
     AtomicBlockUtils,
-    DraftPasteProcessor
+    DraftPasteProcessor,
+    getDefaultKeyBinding,
+    KeyBindingUtil
 } = Draft;
 
-let htmlToContent = require('./utils/htmlToContent')
-let draftRawToHtml = require('./utils/draftRawToHtml')
-let findEntities = require('./utils/findEntities')
+const {
+    hasCommandModifier
+} = KeyBindingUtil
 
-let Link = require('./components/Link')
-let EntityControls = require('./components/EntityControls')
-let InlineStyleControls = require('./components/InlineStyleControls')
-let BlockStyleControls = require('./components/BlockStyleControls')
-let ColorStyleControls = require('./components/ColorStyleControls')
+const htmlToContent = require('./utils/htmlToContent')
+const draftRawToHtml = require('./utils/draftRawToHtml')
+const findEntities = require('./utils/findEntities')
+
+const Link = require('./components/Link')
+const EntityControls = require('./components/EntityControls')
+const InlineStyleControls = require('./components/InlineStyleControls')
+const BlockStyleControls = require('./components/BlockStyleControls')
+const ColorStyleControls = require('./components/ColorStyleControls')
+
+const ajaxUpload = require('../utils/AjaxUpload')
+const {
+    getUpToken,
+    getHash
+} = require('../utils/Qiniu')
 
 class BasicHtmlEditor extends React.Component {
     constructor(props) {
@@ -80,14 +92,6 @@ class BasicHtmlEditor extends React.Component {
         }
         // this.emitHTML = debounce(emitHTML, this.props.debounce);
         this.emitHTML = debounce(emitHTML, delay);
-
-        this.handleKeyCommand = (command) => this._handleKeyCommand(command);
-        this.toggleBlockType = (type) => this._toggleBlockType(type);
-        this.toggleInlineStyle = (style) => this._toggleInlineStyle(style);
-        this.toggleColor = (toggledColor) => this._toggleColor(toggledColor);
-        this.handleReturn = (e) => this._handleReturn(e);
-        this.addLink = this._addLink.bind(this);
-        this.removeLink = this._removeLink.bind(this);
     }
 
     _handleKeyCommand(command) {
@@ -100,6 +104,14 @@ class BasicHtmlEditor extends React.Component {
             return true;
         }
         return false;
+    }
+
+    myKeyBindingFn(e) {
+        console.log(e.keyCode);
+        if (e.keyCode === 83 && hasCommandModifier(e)) {
+            return 'myeditor-save';
+        }
+        return getDefaultKeyBinding(e);
     }
 
     _handleReturn(e) {
@@ -190,7 +202,8 @@ class BasicHtmlEditor extends React.Component {
         if (selection.isCollapsed()) {
             return;
         }
-        const href = window.prompt('Enter a URL');
+        // const href = window.prompt('Enter a URL');
+        const href = 'http://www.baidu.com'
         const entityKey = Entity.create('link', 'MUTABLE', {
             href
         });
@@ -206,6 +219,51 @@ class BasicHtmlEditor extends React.Component {
             return;
         }
         this.onChange(RichUtils.toggleLink(editorState, selection, null));
+    }
+    _onDrop(e) {
+        e.preventDefault()
+        let files = e.dataTransfer.files
+        console.log(e.dataTransfer.files)
+        this._dropHandler(files)
+    }
+    _dropHandler(files) {
+        let {
+            editorState
+        } = this.state;
+        console.log(this.state);
+        let selection = editorState.getSelection();
+        let arrFiles = this.state.arrFiles || []
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].type.indexOf("image") == -1) {
+                alert('文件' + files[f].name + '不是图片。')
+            } else {
+                let href = URL.createObjectURL(files[i])
+                this.uploadFile(files, i)
+                arrFiles.push(href)
+                this.setState({
+                    arrFiles: arrFiles
+                })
+            }
+        }
+    }
+    uploadFile(files, id) {
+        let qnurl = 'http://7xj11y.com1.z0.glb.clouddn.com'
+        let token = getUpToken()
+        let file = files[id]
+        return ajaxUpload({
+            url: 'http://up.qiniu.com',
+            name: 'file',
+            key: file.name,
+            token: token,
+            cors: this.props.cors,
+            withCredentials: this.props.withCredentials,
+            file: file,
+            onProgress: (e) => {
+                console.log((e.loaded / e.total) * 100 + '%')
+            },
+            onLoad: (e) => {},
+            onError: () => {}
+        })
     }
 
     render() {
@@ -229,12 +287,12 @@ class BasicHtmlEditor extends React.Component {
                 React.createElement(BlockStyleControls, {
                     editorState: editorState,
                     blockTypes: this.BLOCK_TYPES,
-                    onToggle: this.toggleBlockType
+                    onToggle: this._toggleBlockType.bind(this)
                 }),
                 React.createElement(InlineStyleControls, {
                     editorState: editorState,
                     inlineStyles: this.INLINE_STYLES,
-                    onToggle: this.toggleInlineStyle
+                    onToggle: this._toggleInlineStyle.bind(this)
                 }),
                 React.createElement(EntityControls, {
                     editorState: editorState,
@@ -242,17 +300,19 @@ class BasicHtmlEditor extends React.Component {
                 }),
                 React.createElement(ColorStyleControls, {
                     editorState: editorState,
-                    onToggle: this.toggleColor
+                    onToggle: this._toggleColor.bind(this)
                 }),
                 React.createElement('div', {
-                        className: className
+                        className: className,
+                        onDrop: this._onDrop.bind(this)
                     },
                     React.createElement(Editor, {
                         blockStyleFn: getBlockStyle,
                         customStyleMap: styleMap,
                         editorState: editorState,
-                        handleKeyCommand: this.handleKeyCommand,
-                        handleReturn: this.handleReturn,
+                        handleKeyCommand: this._handleKeyCommand.bind(this),
+                        handleReturn: this._handleReturn.bind(this),
+                        keyBindingFn: this.myKeyBindingFn.bind(this),
                         onChange: this.onChange,
                         placeholder: 'Tell a story...',
                         ref: 'editor',

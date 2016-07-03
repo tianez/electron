@@ -61,7 +61,7 @@ const routers = (
             }),
             React.createElement(Route, {
                     path: "apicloud",
-                    onEnter: onEnter
+                    // onEnter: onEnter
                 },
                 React.createElement(IndexRoute, {
                     component: ApiCloudsIndex
