@@ -1,4 +1,8 @@
 'use strict'
+let {
+    RichUtils
+} = Draft;
+
 let StyleButton = require('./StyleButton')
 
 let Language = require('../config/Language')
@@ -44,28 +48,43 @@ let BLOCK_TYPES = [{
     style: 'code-block'
 }];
 
-module.exports = function BlockStyleControls(props) {
-    let blockTypes = props.blockTypes || BLOCK_TYPES
-    let editorState = props.editorState
-    const selection = editorState.getSelection();
-    const blockType = editorState
-        .getCurrentContent()
-        .getBlockForKey(selection.getStartKey())
-        .getType();
-    return (
-        React.createElement('div', {
-                className: 'RichEditor-controls'
-            },
-            blockTypes.map(type =>
-                React.createElement(StyleButton, {
-                    key: type.label,
-                    active: type.style === blockType,
-                    label: locals[type.label] || type.label,
-                    icon: type.icon,
-                    onToggle: props.onToggle,
-                    style: type.style
-                })
+
+class BlockStyleControls extends React.Component {
+    constructor() {
+        super()
+    }
+    onToggle(blockType) {
+        this.props.onToggle(
+            RichUtils.toggleBlockType(
+                this.props.editorState,
+                blockType
             )
-        )
-    )
+        );
+    }
+    render() {
+      let blockTypes = this.props.blockTypes || BLOCK_TYPES
+      let editorState = this.props.editorState
+      const selection = editorState.getSelection();
+      const blockType = editorState
+          .getCurrentContent()
+          .getBlockForKey(selection.getStartKey())
+          .getType();
+      return (
+          React.createElement('div', {
+                  className: 'RichEditor-controls'
+              },
+              blockTypes.map(type =>
+                  React.createElement(StyleButton, {
+                      key: type.label,
+                      active: type.style === blockType,
+                      label: locals[type.label] || type.label,
+                      icon: type.icon,
+                      onToggle: this.onToggle.bind(this),
+                      style: type.style
+                  })
+              )
+          )
+      )
+    }
 }
+module.exports = BlockStyleControls

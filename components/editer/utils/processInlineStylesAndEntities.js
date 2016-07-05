@@ -50,12 +50,14 @@ let processInlineStylesAndEntities = function processInlineStylesAndEntities(inl
             console.log(123);
             tag = ['<span style="color:' + range.style + '">', '</span>']
         } else {
-            console.log(232);
             tag = inlineTagMap[range.style];
         }
         console.log(range.style);
         // let tag = inlineTagMap[range.style];
         console.log(tag);
+        if(!tag){
+          tag =  ['<span>', '</span>']
+        }
         if (!tagInsertMap[range.offset]) {
             tagInsertMap[range.offset] = [];
         }
@@ -69,7 +71,6 @@ let processInlineStylesAndEntities = function processInlineStylesAndEntities(inl
             tagInsertMap[range.offset + range.length].unshift(tag[1]);
         }
     });
-
 
     /*
      * FIX INVALID TAG NESTING ADJUSTMENT

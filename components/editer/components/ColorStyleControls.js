@@ -1,5 +1,5 @@
 'use strict'
-// let StyleButton = require('./StyleButton')
+let StyleButton = require('./StyleButton')
 
 let {
     EditorState,
@@ -61,83 +61,84 @@ const colorStyleMap = {
 };
 
 class ColorControls extends React.Component {
-    constructor(props) {
-        super(props)
-    }
-    _toggleColor(toggledColor) {
-        const {
-            editorState
-        } = this.props;
-        const selection = editorState.getSelection();
-        // Let's just allow one color at a time. Turn off all active colors.
-        const nextContentState = Object.keys(colorStyleMap)
-            .reduce((contentState, color) => {
-                return Modifier.removeInlineStyle(contentState, selection, color)
-            }, editorState.getCurrentContent());
-        let nextEditorState = EditorState.push(
-            editorState,
-            nextContentState,
-            'change-inline-style'
-        );
-        const currentStyle = editorState.getCurrentInlineStyle();
-        // Unset style override for current color.
-        if (selection.isCollapsed()) {
-            nextEditorState = currentStyle.reduce((state, color) => {
-                return RichUtils.toggleInlineStyle(state, color);
-            }, nextEditorState);
+        constructor(props) {
+            super(props)
         }
-        // If the color is being toggled on, apply it.
-        if (!currentStyle.has(toggledColor)) {
-            nextEditorState = RichUtils.toggleInlineStyle(
-                nextEditorState,
-                toggledColor
+        _toggleColor(toggledColor) {
+            const {
+                editorState
+            } = this.props;
+            const selection = editorState.getSelection();
+            // Let's just allow one color at a time. Turn off all active colors.
+            const nextContentState = Object.keys(colorStyleMap)
+                .reduce((contentState, color) => {
+                    return Modifier.removeInlineStyle(contentState, selection, color)
+                }, editorState.getCurrentContent());
+            let nextEditorState = EditorState.push(
+                editorState,
+                nextContentState,
+                'change-inline-style'
             );
+            const currentStyle = editorState.getCurrentInlineStyle();
+            // Unset style override for current color.
+            if (selection.isCollapsed()) {
+                nextEditorState = currentStyle.reduce((state, color) => {
+                    return RichUtils.toggleInlineStyle(state, color);
+                }, nextEditorState);
+            }
+            // If the color is being toggled on, apply it.
+            if (!currentStyle.has(toggledColor)) {
+                nextEditorState = RichUtils.toggleInlineStyle(
+                    nextEditorState,
+                    toggledColor
+                );
+            }
+            this.props.onToggle(nextEditorState);
         }
-        this.props.onToggle(nextEditorState);
-    }
-    render() {
-        let currentStyle = this.props.editorState.getCurrentInlineStyle()
-        return (
-            React.createElement('div', {
-                    className: 'RichEditor-controls'
-                },
-                COLORS.map((type) =>
-                    React.createElement(StyleButton, {
-                        key: type.label,
-                        active: currentStyle.has(type.style),
-                        label: type.label,
-                        onToggle: this._toggleColor.bind(this),
-                        style: type.style
-                    })
+        render() {
+            let currentStyle = this.props.editorState.getCurrentInlineStyle()
+            return (
+                React.createElement('div', {
+                        className: 'RichEditor-controls'
+                    },
+                    COLORS.map((type) =>
+                        React.createElement(StyleButton, {
+                            key: type.label,
+                            active: currentStyle.has(type.style),
+                            label: type.label,
+                            onToggle: this._toggleColor.bind(this),
+                            colorStyleMap: colorStyleMap,
+                            style: type.style
+                        })
+                    )
                 )
             )
-        )
-    }
-}
-
-class StyleButton extends React.Component {
-    constructor() {
-        super()
-    }
-    onToggle(e) {
-        e.preventDefault()
-        this.props.onToggle(this.props.style)
-    }
-    render() {
-        let className = 'RichEditor-styleButton';
-        let style;
-        if (this.props.active) {
-            className += ' RichEditor-activeButton';
-            style = colorStyleMap[this.props.style]
         }
-        return (
-            React.createElement('span', {
-                className: className,
-                style: style,
-                onMouseDown: this.onToggle.bind(this)
-            }, this.props.label)
-        )
     }
-}
+    //
+    // class StyleButton extends React.Component {
+    //     constructor() {
+    //         super()
+    //     }
+    //     onToggle(e) {
+    //         e.preventDefault()
+    //         this.props.onToggle(this.props.style)
+    //     }
+    //     render() {
+    //         let className = 'RichEditor-styleButton';
+    //         let style;
+    //         if (this.props.active) {
+    //             className += ' RichEditor-activeButton';
+    //             style = colorStyleMap[this.props.style]
+    //         }
+    //         return (
+    //             React.createElement('span', {
+    //                 className: className,
+    //                 style: style,
+    //                 onMouseDown: this.onToggle.bind(this)
+    //             }, this.props.label)
+    //         )
+    //     }
+    // }
 
 module.exports = ColorControls

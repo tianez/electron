@@ -59,26 +59,23 @@ class BasicHtmlEditor extends React.Component {
                     decorator
                 ) : EditorState.createEmpty(decorator)
         };
-
+        this.focus = () => this.refs.editor.focus()
         this.onChange = (editorState) => {
             let previousContent = this.state.editorState.getCurrentContent();
             this.setState({
                 editorState
             });
-
-            // only emit html when content changes
             if (previousContent !== editorState.getCurrentContent()) {
                 this.emitHTML(editorState);
             }
         };
+        this.emitHTML = debounce(emitHTML, delay);
 
         function emitHTML(editorState) {
             let raw = convertToRaw(editorState.getCurrentContent());
             let html = draftRawToHtml(raw);
             this.props.onChange(html);
         }
-        // this.emitHTML = debounce(emitHTML, this.props.debounce);
-        this.emitHTML = debounce(emitHTML, delay);
     }
 
     _handleKeyCommand(command) {
@@ -108,25 +105,6 @@ class BasicHtmlEditor extends React.Component {
             return false;
         }
     }
-
-    _toggleBlockType(blockType) {
-        this.onChange(
-            RichUtils.toggleBlockType(
-                this.state.editorState,
-                blockType
-            )
-        );
-    }
-
-    _toggleInlineStyle(inlineStyle) {
-        this.onChange(
-            RichUtils.toggleInlineStyle(
-                this.state.editorState,
-                inlineStyle
-            )
-        );
-    }
-
     _addLineBreak( /* e */ ) {
         let newContent, newEditorState;
         const {
@@ -178,7 +156,7 @@ class BasicHtmlEditor extends React.Component {
             } else if (files[i].type.indexOf("image") != -1) {
                 let urlValue = URL.createObjectURL(files[i])
                 const entityKey = Entity.create('image', 'IMMUTABLE', {
-                    href: urlValue
+                    src: urlValue
                 })
                 this.uploadFile(files, i)
                 arrFiles.push(urlValue)
@@ -211,9 +189,13 @@ class BasicHtmlEditor extends React.Component {
             withCredentials: this.props.withCredentials,
             file: file,
             onProgress: (e) => {
-                console.log((e.loaded / e.total) * 100 + '%')
+                // console.log((e.loaded / e.total) * 100 + '%')
             },
-            onLoad: (e) => {},
+            onLoad: (e) => {
+              let res = JSON.parse(e.currentTarget.responseText)
+              console.log(qnurl + '/' + res.name);
+              console.log(res);
+            },
             onError: () => {}
         })
     }
@@ -238,13 +220,11 @@ class BasicHtmlEditor extends React.Component {
                 },
                 React.createElement(BlockStyleControls, {
                     editorState: editorState,
-                    blockTypes: this.BLOCK_TYPES,
-                    onToggle: this._toggleBlockType.bind(this)
+                    onToggle: this.onChange
                 }),
                 React.createElement(InlineStyleControls, {
                     editorState: editorState,
-                    inlineStyles: this.INLINE_STYLES,
-                    onToggle: this._toggleInlineStyle.bind(this)
+                    onToggle: this.onChange
                 }),
                 React.createElement(EntityControls, {
                     editorState: editorState,

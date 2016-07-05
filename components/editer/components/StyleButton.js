@@ -2,10 +2,10 @@
 class StyleButton extends React.Component {
     constructor() {
         super();
-        this.onToggle = (e) => {
-            e.preventDefault();
-            this.props.onToggle(this.props.style);
-        };
+    }
+    onToggle(e) {
+        e.preventDefault()
+        this.props.onToggle(this.props.style)
     }
     render() {
         let className = 'RichEditor-styleButton';
@@ -15,16 +15,22 @@ class StyleButton extends React.Component {
             className += this.props.icon
             label = ''
         }
+        let style;
         if (this.props.active) {
-            className += ' RichEditor-activeButton';
+            className += ' RichEditor-activeButton'
+            if (this.props.colorStyleMap) {
+                style = this.props.colorStyleMap[this.props.style]
+            }
         }
         return (
             React.createElement('span', {
                 className: className,
                 title: this.props.label,
-                onMouseDown: this.onToggle
+                style: style,
+                onMouseDown: this.onToggle.bind(this)
             }, label)
         );
     }
 }
+
 module.exports = StyleButton

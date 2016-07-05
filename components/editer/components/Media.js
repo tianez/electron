@@ -31,7 +31,7 @@ const Media = (props) => {
 const Image = (props) => {
     return (
         React.createElement('img', {
-            src: props.href,
+            src: props.src,
             style: {
                 width: '200px'
             }

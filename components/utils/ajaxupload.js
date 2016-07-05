@@ -31,6 +31,6 @@ function ajaxUpload(data) {
     return xhr
 }
 
-module.exports = function (args) {
+module.exports = function(args) {
     return ajaxUpload(args)
 }
