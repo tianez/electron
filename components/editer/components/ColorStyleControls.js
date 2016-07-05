@@ -1,6 +1,13 @@
 'use strict'
 // let StyleButton = require('./StyleButton')
 
+let {
+    EditorState,
+    RichUtils,
+    Modifier
+} = Draft;
+
+
 let Language = require('../config/Language')
 let local = 'zh_CN'
 let locals = Language[local]
@@ -57,6 +64,37 @@ class ColorControls extends React.Component {
     constructor(props) {
         super(props)
     }
+    _toggleColor(toggledColor) {
+        const {
+            editorState
+        } = this.props;
+        const selection = editorState.getSelection();
+        // Let's just allow one color at a time. Turn off all active colors.
+        const nextContentState = Object.keys(colorStyleMap)
+            .reduce((contentState, color) => {
+                return Modifier.removeInlineStyle(contentState, selection, color)
+            }, editorState.getCurrentContent());
+        let nextEditorState = EditorState.push(
+            editorState,
+            nextContentState,
+            'change-inline-style'
+        );
+        const currentStyle = editorState.getCurrentInlineStyle();
+        // Unset style override for current color.
+        if (selection.isCollapsed()) {
+            nextEditorState = currentStyle.reduce((state, color) => {
+                return RichUtils.toggleInlineStyle(state, color);
+            }, nextEditorState);
+        }
+        // If the color is being toggled on, apply it.
+        if (!currentStyle.has(toggledColor)) {
+            nextEditorState = RichUtils.toggleInlineStyle(
+                nextEditorState,
+                toggledColor
+            );
+        }
+        this.props.onToggle(nextEditorState);
+    }
     render() {
         let currentStyle = this.props.editorState.getCurrentInlineStyle()
         return (
@@ -68,7 +106,7 @@ class ColorControls extends React.Component {
                         key: type.label,
                         active: currentStyle.has(type.style),
                         label: type.label,
-                        onToggle: this.props.onToggle,
+                        onToggle: this._toggleColor.bind(this),
                         style: type.style
                     })
                 )

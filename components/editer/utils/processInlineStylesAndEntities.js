@@ -150,7 +150,7 @@ let processInlineStylesAndEntities = function processInlineStylesAndEntities(inl
     sortedEntityRanges.forEach(function(range) {
         let entity = entityMap[range.key];
         let tag = entityTagMap[entity.type];
-
+console.log(entity.type);
         let compiledTag0 = template(tag[0])(entity.data);
         let compiledTag1 = template(tag[1])(entity.data);
 

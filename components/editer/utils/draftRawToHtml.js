@@ -34,13 +34,17 @@ let nestedTagMap = {
   'unordered-list-item': ['<ul>', '</ul>']
 };
 
+let inlineStyleRanges = {
+
+}
+
 let draftRawToHtml = function(raw) {
   let html = '';
   let nestLevel = [];
   let lastIndex = raw.blocks.length - 1;
 
   raw.blocks.forEach(function(block, index) {
-
+// console.log(block.type); //atomic
     // close tag if not consecutive same nested
     if (nestLevel.length > 0 && nestLevel[0] !== block.type) {
       let type = nestLevel.shift();

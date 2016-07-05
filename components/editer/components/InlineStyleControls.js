@@ -1,4 +1,5 @@
 'use strict'
+
 let StyleButton = require('./StyleButton')
 
 let Language = require('../config/Language')

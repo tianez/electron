@@ -26,11 +26,13 @@ const htmlToContent = require('./utils/htmlToContent')
 const draftRawToHtml = require('./utils/draftRawToHtml')
 const findEntities = require('./utils/findEntities')
 
-const Link = require('./components/Link')
+
 const EntityControls = require('./components/EntityControls')
 const InlineStyleControls = require('./components/InlineStyleControls')
 const BlockStyleControls = require('./components/BlockStyleControls')
 const ColorStyleControls = require('./components/ColorStyleControls')
+const Link = require('./components/Link')
+const Media = require('./components/Media')
 
 const ajaxUpload = require('../utils/AjaxUpload')
 const {
@@ -47,23 +49,9 @@ class BasicHtmlEditor extends React.Component {
         let delay = props.delay ? props.delay : 500
 
         const decorator = new CompositeDecorator([{
-            strategy: findEntities.bind(null, 'link'),
+            strategy: findLinkEntities,
             component: Link
         }]);
-        this.focus = () => this.refs.editor.focus()
-        this.ENTITY_CONTROLS = [{
-            label: 'Link',
-            icon: 'fa-link',
-            action: this._addLink.bind(this)
-        }, {
-            label: 'unLink',
-            icon: 'fa-unLink',
-            action: this._removeLink.bind(this)
-        }, {
-            label: 'focus',
-            action: this.focus
-        }]
-
         this.state = {
             editorState: value ?
                 EditorState.createWithContent(
@@ -71,7 +59,6 @@ class BasicHtmlEditor extends React.Component {
                     decorator
                 ) : EditorState.createEmpty(decorator)
         };
-
 
         this.onChange = (editorState) => {
             let previousContent = this.state.editorState.getCurrentContent();
@@ -132,45 +119,12 @@ class BasicHtmlEditor extends React.Component {
     }
 
     _toggleInlineStyle(inlineStyle) {
-        console.log(inlineStyle);
         this.onChange(
             RichUtils.toggleInlineStyle(
                 this.state.editorState,
                 inlineStyle
             )
         );
-    }
-
-    _toggleColor(toggledColor) {
-        const {
-            editorState
-        } = this.state;
-        const selection = editorState.getSelection();
-        // Let's just allow one color at a time. Turn off all active colors.
-        const nextContentState = Object.keys(styleMap)
-            .reduce((contentState, color) => {
-                return Modifier.removeInlineStyle(contentState, selection, color)
-            }, editorState.getCurrentContent());
-        let nextEditorState = EditorState.push(
-            editorState,
-            nextContentState,
-            'change-inline-style'
-        );
-        const currentStyle = editorState.getCurrentInlineStyle();
-        // Unset style override for current color.
-        if (selection.isCollapsed()) {
-            nextEditorState = currentStyle.reduce((state, color) => {
-                return RichUtils.toggleInlineStyle(state, color);
-            }, nextEditorState);
-        }
-        // If the color is being toggled on, apply it.
-        if (!currentStyle.has(toggledColor)) {
-            nextEditorState = RichUtils.toggleInlineStyle(
-                nextEditorState,
-                toggledColor
-            );
-        }
-        this.onChange(nextEditorState);
     }
 
     _addLineBreak( /* e */ ) {
@@ -181,9 +135,7 @@ class BasicHtmlEditor extends React.Component {
         const content = editorState.getCurrentContent();
         const selection = editorState.getSelection();
         const block = content.getBlockForKey(selection.getStartKey());
-
         console.log(content.toJS(), selection.toJS(), block.toJS());
-
         if (block.type === 'code-block') {
             newContent = Modifier.insertText(content, selection, '\n');
             newEditorState = EditorState.push(editorState, newContent, 'add-new-line');
@@ -194,32 +146,6 @@ class BasicHtmlEditor extends React.Component {
         }
     }
 
-    _addLink( /* e */ ) {
-        const {
-            editorState
-        } = this.state;
-        const selection = editorState.getSelection();
-        if (selection.isCollapsed()) {
-            return;
-        }
-        // const href = window.prompt('Enter a URL');
-        const href = 'http://www.baidu.com'
-        const entityKey = Entity.create('link', 'MUTABLE', {
-            href
-        });
-        this.onChange(RichUtils.toggleLink(editorState, selection, entityKey));
-    }
-
-    _removeLink( /* e */ ) {
-        const {
-            editorState
-        } = this.state;
-        const selection = editorState.getSelection();
-        if (selection.isCollapsed()) {
-            return;
-        }
-        this.onChange(RichUtils.toggleLink(editorState, selection, null));
-    }
     _onDrop(e) {
         e.preventDefault()
         let files = e.dataTransfer.files
@@ -230,19 +156,45 @@ class BasicHtmlEditor extends React.Component {
         let {
             editorState
         } = this.state;
-        console.log(this.state);
         let selection = editorState.getSelection();
         let arrFiles = this.state.arrFiles || []
         for (let i = 0; i < files.length; i++) {
-            if (files[i].type.indexOf("image") == -1) {
-                alert('文件' + files[f].name + '不是图片。')
-            } else {
-                let href = URL.createObjectURL(files[i])
-                this.uploadFile(files, i)
-                arrFiles.push(href)
-                this.setState({
-                    arrFiles: arrFiles
+            console.log(files[i].type);
+            if (files[i].type.indexOf("audio") != -1) {
+                let audio = URL.createObjectURL(files[i])
+                const entityKey = Entity.create('audio', 'IMMUTABLE', {
+                    src: audio
                 })
+                this.uploadFile(files, i)
+                this.setState({
+                    editorState: AtomicBlockUtils.insertAtomicBlock(
+                        editorState,
+                        entityKey,
+                        ' '
+                    )
+                }, () => {
+                    setTimeout(() => this.focus(), 0);
+                });
+            } else if (files[i].type.indexOf("image") != -1) {
+                let urlValue = URL.createObjectURL(files[i])
+                const entityKey = Entity.create('image', 'IMMUTABLE', {
+                    href: urlValue
+                })
+                this.uploadFile(files, i)
+                arrFiles.push(urlValue)
+                this.setState({
+                    editorState: AtomicBlockUtils.insertAtomicBlock(
+                        editorState,
+                        entityKey,
+                        ' '
+                    ),
+                    showURLInput: false,
+                    urlValue: '',
+                }, () => {
+                    setTimeout(() => this.focus(), 0);
+                });
+            } else {
+                alert('文件' + files[i].name + '不允许上传。')
             }
         }
     }
@@ -296,11 +248,11 @@ class BasicHtmlEditor extends React.Component {
                 }),
                 React.createElement(EntityControls, {
                     editorState: editorState,
-                    entityControls: this.ENTITY_CONTROLS
+                    onChange: this.onChange
                 }),
                 React.createElement(ColorStyleControls, {
                     editorState: editorState,
-                    onToggle: this._toggleColor.bind(this)
+                    onToggle: this.onChange
                 }),
                 React.createElement('div', {
                         className: className,
@@ -308,6 +260,7 @@ class BasicHtmlEditor extends React.Component {
                     },
                     React.createElement(Editor, {
                         blockStyleFn: getBlockStyle,
+                        blockRendererFn: mediaBlockRenderer,
                         customStyleMap: styleMap,
                         editorState: editorState,
                         handleKeyCommand: this._handleKeyCommand.bind(this),
@@ -362,6 +315,29 @@ function getBlockStyle(block) {
         default:
             return null;
     }
+}
+
+function mediaBlockRenderer(block) {
+    if (block.getType() === 'atomic') {
+        return {
+            component: Media,
+            editable: false,
+        };
+    }
+    return null;
+}
+
+function findLinkEntities(contentBlock, callback) {
+    contentBlock.findEntityRanges(
+        (character) => {
+            const entityKey = character.getEntity();
+            return (
+                entityKey !== null &&
+                Entity.get(entityKey).getType() === 'link'
+            );
+        },
+        callback
+    )
 }
 
 module.exports = BasicHtmlEditor

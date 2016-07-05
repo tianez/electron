@@ -7,7 +7,9 @@ const {
 const Editer = require('../components/editer')
 
 let html = `
-  <h1>This is a Title1111112323223</h1>
+<h1>This is a Title</h1>
+ <p>Here's some text, it's useful</p>
+ <p>More text, some inline <strong>styling</strong> for <em>some</em> elements</p>
 `;
 
 var Home = React.createClass({
@@ -20,12 +22,12 @@ var Home = React.createClass({
         console.log(data); // Momentjs object
         console.log(data.format('YYYY-MM-D HH d')); // Momentjs object
     },
-    updateHtml:function(html) {
+    updateHtml: function(html) {
         console.log(html);
-      this.setState({
-        html:html
-      })
-  },
+        this.setState({
+            html: html
+        })
+    },
     render: function() {
         return (
             React.createElement('div', {
@@ -40,7 +42,7 @@ var Home = React.createClass({
                     }),
                     React.createElement('div', {
                         dangerouslySetInnerHTML: {
-                          __html:this.state.html
+                            __html: this.state.html
                         }
                     })
 
