@@ -7,6 +7,9 @@ let {
 } = require('lodash')
 
 let processInlineStylesAndEntities = function processInlineStylesAndEntities(inlineTagMap, entityTagMap, entityMap, block) {
+    console.log(block);
+    console.log(block.entityRanges);
+    console.log(block.inlineStyleRanges);
     if (!block.inlineStyleRanges && !block.entityRanges) {
         //TODO: optimisation, exit early if length === 0 as well
         return block.text;
@@ -34,7 +37,7 @@ let processInlineStylesAndEntities = function processInlineStylesAndEntities(inl
             }
         }
     });
-
+console.log(block.entityRanges);
     /*
      * INLINE STYLES
      */
@@ -47,7 +50,6 @@ let processInlineStylesAndEntities = function processInlineStylesAndEntities(inl
         let tag
         let patt1 = new RegExp("#")
         if (patt1.test(range.style)) {
-            console.log(123);
             tag = ['<span style="color:' + range.style + '">', '</span>']
         } else {
             tag = inlineTagMap[range.style];
@@ -55,8 +57,8 @@ let processInlineStylesAndEntities = function processInlineStylesAndEntities(inl
         console.log(range.style);
         // let tag = inlineTagMap[range.style];
         console.log(tag);
-        if(!tag){
-          tag =  ['<span>', '</span>']
+        if (!tag) {
+            tag = ['<span>', '</span>']
         }
         if (!tagInsertMap[range.offset]) {
             tagInsertMap[range.offset] = [];
@@ -147,11 +149,11 @@ let processInlineStylesAndEntities = function processInlineStylesAndEntities(inl
      */
 
     let sortedEntityRanges = sortBy(block.entityRanges, 'offset');
-
+console.log(sortedEntityRanges);
     sortedEntityRanges.forEach(function(range) {
         let entity = entityMap[range.key];
         let tag = entityTagMap[entity.type];
-console.log(entity.type);
+        console.log(entity.type);
         let compiledTag0 = template(tag[0])(entity.data);
         let compiledTag1 = template(tag[1])(entity.data);
 

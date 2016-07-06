@@ -9,7 +9,7 @@ const Editer = require('../components/editer')
 let html = `
 <h1>This is a Title</h1>
  <p>Here's some text, it's useful</p>
- <p>More text, some inline <strong>styling</strong> for <em>some</em> elements</p>
+ <img src="http://www.itianyugroup.com/uploadfile/2016/0629/20160629120921895.jpg" />
 `;
 
 var Home = React.createClass({

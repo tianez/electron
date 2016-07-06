@@ -7,7 +7,6 @@ const {
     Modifier,
     RichUtils,
     DefaultDraftBlockRenderMap,
-    convertFromRaw,
     convertToRaw,
     CompositeDecorator,
     ContentState,
@@ -16,7 +15,7 @@ const {
     DraftPasteProcessor,
     getDefaultKeyBinding,
     KeyBindingUtil
-} = Draft;
+} = Draft
 
 const {
     hasCommandModifier
@@ -39,6 +38,8 @@ const {
     getUpToken,
     getHash
 } = require('../utils/Qiniu')
+
+const upload = require('./utils/upload')
 
 class BasicHtmlEditor extends React.Component {
     constructor(props) {
@@ -91,7 +92,7 @@ class BasicHtmlEditor extends React.Component {
     }
 
     myKeyBindingFn(e) {
-        console.log(e.keyCode);
+        // console.log(e.keyCode);
         if (e.keyCode === 83 && hasCommandModifier(e)) {
             return 'myeditor-save';
         }
@@ -128,22 +129,76 @@ class BasicHtmlEditor extends React.Component {
         e.preventDefault()
         let files = e.dataTransfer.files
         console.log(e.dataTransfer.files)
-        this._dropHandler(files)
+        let {
+            editorState
+        } = this.state;
+        this._dropHandler2(files)
+    }
+    _onload(res, type) {
+        let {
+            editorState
+        } = this.state;
+        console.log(res);
+        const entityKey = Entity.create(type, 'IMMUTABLE', {
+            src: 'http://7xj11y.com1.z0.glb.clouddn.com/' + res.name
+        })
+        this.setState({
+            editorState: AtomicBlockUtils.insertAtomicBlock(
+                editorState,
+                entityKey,
+                ' '
+            )
+        }, () => {
+            setTimeout(() => this.focus(), 0);
+        })
+    }
+    _dropHandler2(files) {
+        let {
+            editorState
+        } = this.state;
+        let selection = editorState.getSelection();
+        for (let i = 0; i < files.length; i++) {
+            console.log(files[i]);
+            getHash(files[i].path, function(e) {
+                console.log(e);
+            })
+            let type
+            if (files[i].type.indexOf("audio") != -1) {
+                type = 'audio'
+            } else if (files[i].type.indexOf("video") != -1) {
+                type = 'video'
+            } else if (files[i].type.indexOf("image") != -1) {
+                type = 'image'
+            } else {
+                alert('文件' + files[i].name + '不允许上传。')
+            }
+            if(type){
+                let urlValue = URL.createObjectURL(files[i])
+                let rs = upload({
+                    files: files,
+                    id: i,
+                    type: type,
+                    onload: this._onload.bind(this)
+                })
+            }
+        }
     }
     _dropHandler(files) {
         let {
             editorState
         } = this.state;
         let selection = editorState.getSelection();
-        let arrFiles = this.state.arrFiles || []
         for (let i = 0; i < files.length; i++) {
-            console.log(files[i].type);
             if (files[i].type.indexOf("audio") != -1) {
                 let audio = URL.createObjectURL(files[i])
+                upload({
+                    files: files,
+                    id: i,
+                    onload: this._onload.bind(this)
+                })
                 const entityKey = Entity.create('audio', 'IMMUTABLE', {
                     src: audio
                 })
-                this.uploadFile(files, i)
                 this.setState({
                     editorState: AtomicBlockUtils.insertAtomicBlock(
                         editorState,
@@ -155,49 +210,17 @@ class BasicHtmlEditor extends React.Component {
                 });
             } else if (files[i].type.indexOf("image") != -1) {
                 let urlValue = URL.createObjectURL(files[i])
-                const entityKey = Entity.create('image', 'IMMUTABLE', {
-                    src: urlValue
+                let rs = upload({
+                    files: files,
+                    id: i,
+                    type: 'image',
+                    onload: this._onload.bind(this)
                 })
-                this.uploadFile(files, i)
-                arrFiles.push(urlValue)
-                this.setState({
-                    editorState: AtomicBlockUtils.insertAtomicBlock(
-                        editorState,
-                        entityKey,
-                        ' '
-                    ),
-                    showURLInput: false,
-                    urlValue: '',
-                }, () => {
-                    setTimeout(() => this.focus(), 0);
-                });
+                console.log(rs);
             } else {
                 alert('文件' + files[i].name + '不允许上传。')
             }
         }
-    }
-    uploadFile(files, id) {
-        let qnurl = 'http://7xj11y.com1.z0.glb.clouddn.com'
-        let token = getUpToken()
-        let file = files[id]
-        return ajaxUpload({
-            url: 'http://up.qiniu.com',
-            name: 'file',
-            key: file.name,
-            token: token,
-            cors: this.props.cors,
-            withCredentials: this.props.withCredentials,
-            file: file,
-            onProgress: (e) => {
-                // console.log((e.loaded / e.total) * 100 + '%')
-            },
-            onLoad: (e) => {
-              let res = JSON.parse(e.currentTarget.responseText)
-              console.log(qnurl + '/' + res.name);
-              console.log(res);
-            },
-            onError: () => {}
-        })
     }
 
     render() {
