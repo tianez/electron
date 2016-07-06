@@ -1,3 +1,10 @@
+// let {
+//     DraftPasteProcessor,
+//     processHTML
+// } = Draft
+// let {
+//     processHTML
+// } = DraftPasteProcessor
 let {
     processHTML
 } = require('draft-js/lib/DraftPasteProcessor')
