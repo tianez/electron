@@ -1,5 +1,6 @@
 'use strict'
 const request = require('superagent')
+const jQuery = require('jquery')
 const {
     Link
 } = ReactRouter;
@@ -30,6 +31,20 @@ var Login = React.createClass({
     },
     _onSubmit: function(e) {
         e.preventDefault();
+        jQuery.ajax({
+            type: 'post',
+            url: 'http://www.mycms.com/login2',
+            data: this.state.info,
+            success: function(data) {
+                console.log(data);
+            },
+            error: function() {
+                alert('500 error!')
+            }
+        });
+    },
+    _onSubmit2: function(e) {
+        e.preventDefault();
         request
             .post('http://www.mycms.com/login2')
             .set('Accept', 'application/json')
@@ -59,19 +74,26 @@ var Login = React.createClass({
                             React.createElement('input', {
                                 type: 'text',
                                 placeholder: 'username',
-                                value:this.state.info.user_name,
+                                value: this.state.info.user_name,
                                 onChange: this._onChange1
                             }),
                             React.createElement('input', {
                                 type: 'password',
                                 placeholder: 'Password',
-                                value:this.state.info.password,
+                                value: this.state.info.password,
                                 onChange: this._onChange2
                             }),
                             React.createElement('input', {
                                 type: 'submit',
                                 className: 'pure-button pure-button-primary',
+                                onClick:this._onSubmit,
                                 value: '登陆'
+                            }),
+                            React.createElement('input', {
+                                type: 'submit',
+                                className: 'pure-button pure-button-primary',
+                                onClick:this._onSubmit2,
+                                value: '登陆2'
                             })
                         )
                     ),
