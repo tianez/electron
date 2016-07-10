@@ -1,6 +1,5 @@
 'use strict'
 const request = require('superagent')
-const jQuery = require('jquery')
 const {
     Link
 } = ReactRouter;
@@ -31,26 +30,13 @@ var Login = React.createClass({
     },
     _onSubmit: function(e) {
         e.preventDefault();
-        jQuery.ajax({
-            type: 'post',
-            url: 'http://www.mycms.com/login2',
-            data: this.state.info,
-            success: function(data) {
-                console.log(data);
-            },
-            error: function() {
-                alert('500 error!')
-            }
-        });
-    },
-    _onSubmit2: function(e) {
-        e.preventDefault();
         request
             .post('http://www.mycms.com/login2')
-            .set('Accept', 'application/json')
             .send(this.state.info)
-            .end(function(data) {
-                console.log(data);
+            .set('Accept', 'application/json')
+            .end(function(err, res) {
+                console.log(err);
+                console.log(res);
             })
     },
     render: function() {
@@ -86,14 +72,7 @@ var Login = React.createClass({
                             React.createElement('input', {
                                 type: 'submit',
                                 className: 'pure-button pure-button-primary',
-                                onClick:this._onSubmit,
                                 value: '登陆'
-                            }),
-                            React.createElement('input', {
-                                type: 'submit',
-                                className: 'pure-button pure-button-primary',
-                                onClick:this._onSubmit2,
-                                value: '登陆2'
                             })
                         )
                     ),
