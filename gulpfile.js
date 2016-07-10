@@ -51,7 +51,7 @@ gulp.task('less', function() {
 })
 
 gulp.task('web', function(cb) {
-  runSequence('webpack', 'less', ['min-css', 'min-js'], cb);
+    runSequence('webpack', 'less', ['min-css', 'min-js'], cb);
 });
 
 
@@ -71,4 +71,4 @@ gulp.task('watch', function() {
     gulp.watch(['./less/*.less'], ['less'])
 })
 
-gulp.task('default', ['watch'])
+gulp.task('default', ['connect', 'watch'])

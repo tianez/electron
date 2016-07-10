@@ -79,6 +79,7 @@ class Sidebar extends React.Component {
         var url = 'http://www.mycms.com/react/sidebar';
         request.get(url)
             .end(function(err, res) {
+              console.log(res);
                 if (err) throw err;
                 var data = JSON.parse(res.text);
                 console.log(data);
