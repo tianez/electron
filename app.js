@@ -23,7 +23,8 @@ const {
     ApiClouds,
     ApiCloud,
     Pages,
-    Page
+    Page,
+    Login
 } = require('./html')
 
 require('./html/global')
@@ -103,12 +104,16 @@ const routers = (
                         component: Page
                     })
                 )
-            ),
-            React.createElement(Route, {
-                path: "*",
-                component: Nomatch
-            })
-        )
+            )
+        ),
+        React.createElement(Route, {
+            path: "login",
+            component: Login
+        }),
+        React.createElement(Route, {
+            path: "*",
+            component: Nomatch
+        })
     )
 )
 ReactDOM.render(routers, document.getElementById('app'))

@@ -68,8 +68,8 @@ class Header extends React.Component {
                         className: 'pure-menu-list left'
                     },
                     React.createElement(A, {
-                        to: 'drag',
-                        title: 'drag'
+                        to: 'login',
+                        title: 'login'
                     }),
                     menus
                 )

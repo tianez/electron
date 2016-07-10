@@ -11,6 +11,7 @@ const ApiClouds = require('./ApiClouds')
 const ApiCloud = require('./ApiCloud')
 const Pages = require('./Pages')
 const Page = require('./Page')
+const Login = require('./login')
 
 var Temp = {
     Layout: Layout,
@@ -24,5 +25,6 @@ var Temp = {
     ApiCloud: ApiCloud,
     Pages: Pages,
     Page: Page,
+    Login: Login,
 }
 module.exports = Temp
