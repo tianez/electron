@@ -58,6 +58,7 @@ var ApiClouds = React.createClass({
                 ConfigActions.msg(res.status + 'error');
             } else {
                 let data = JSON.parse(res.text)
+                console.log(data);
                 if (data.res == 404) {
                     ConfigActions.update('title', data.msg)
                     this.setState({
@@ -114,7 +115,7 @@ var ApiClouds = React.createClass({
         }
         return (
             React.createElement('section', {
-                    className: 'warper container  pure-g'
+                    className: 'pure-g'
                 },
                 React.createElement('h3', {
                         className: 'pure-u-1'

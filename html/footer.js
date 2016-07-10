@@ -16,19 +16,11 @@ class Footer extends React.Component {
             })
         }.bind(this))
     }
-    api() {
-        ApiStore.get('acman/zhaiyanapi/tcrand?fangfa=json', function(err, res) {
-            let data = JSON.parse(res.text)
-            this.setState({
-                info: data
-            })
-        }.bind(this))
-    }
     render() {
         return (
             React.createElement('footer', {
                     id: 'footer',
-                    className: 'footer'
+                    className: 'footer pure-u-1'
                 },
                 this.state.info.taici,
                 '—— ',

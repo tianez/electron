@@ -9,6 +9,8 @@ const Drag = require('./drag')
 const ApiCloudsIndex = require('./ApiCloudsIndex')
 const ApiClouds = require('./ApiClouds')
 const ApiCloud = require('./ApiCloud')
+const Pages = require('./Pages')
+const Page = require('./Page')
 
 var Temp = {
     Layout: Layout,
@@ -20,5 +22,7 @@ var Temp = {
     ApiCloudsIndex: ApiCloudsIndex,
     ApiClouds: ApiClouds,
     ApiCloud: ApiCloud,
+    Pages: Pages,
+    Page: Page,
 }
 module.exports = Temp

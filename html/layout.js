@@ -2,6 +2,7 @@
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup
 const Apicloud = require('../components/utils/Apicloud')
 const Header = require('./header')
+const Sidebar = require('./sidebar')
 const Footer = require('./footer')
 var Layout = React.createClass({
     componentDidMount: function() {
@@ -19,24 +20,34 @@ var Layout = React.createClass({
     },
     render: function() {
         return (
+            // React.createElement(ReactCSSTransitionGroup, {
+            //         component: 'div',
+            //         id: 'warper',
+            //         className: 'pure-g',
+            //         transitionName: 'switch',
+            //         transitionEnterTimeout: 500,
+            //         transitionLeaveTimeout: 500
+            //     },
             React.createElement('div', {
-                    className: 'warp'
+                    id: 'warper',
+                    className: 'pure-g',
                 },
+                // React.createElement('div', {
+                //         className: 'switch',
+                //         key: this.props.location.pathname
+                //     },
                 React.createElement(Header),
-                React.createElement(ReactCSSTransitionGroup, {
-                        component: 'div',
-                        id: 'main',
-                        transitionName: 'switch',
-                        transitionEnterTimeout: 500,
-                        transitionLeaveTimeout: 500
+                React.createElement('section', {
+                        id: 'main'
                     },
-                    React.createElement('div', {
-                            className: 'switch',
-                            key: this.props.location.pathname
-                        },
-                        this.props.children)
+                    React.createElement(Sidebar),
+                    React.createElement('section', {
+                        id: 'content',
+                        className: 'pure-u-1'
+                    }, this.props.children)
                 ),
                 React.createElement(Footer)
+                // )
             )
         )
     }

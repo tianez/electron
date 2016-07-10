@@ -21,7 +21,9 @@ const {
     Drag,
     ApiCloudsIndex,
     ApiClouds,
-    ApiCloud
+    ApiCloud,
+    Pages,
+    Page
 } = require('./html')
 
 require('./html/global')
@@ -75,6 +77,30 @@ const routers = (
                     React.createElement(Route, {
                         path: ":articleId",
                         component: ApiCloud
+                    })
+                )
+            ),
+            React.createElement(Route, {
+                    path: "api",
+                    // onEnter: onEnter
+                },
+                React.createElement(IndexRoute, {
+                    component: ApiCloudsIndex
+                }),
+                React.createElement(Redirect, {
+                    from: ':pages',
+                    to: ':pages/index'
+                }),
+                React.createElement(Route, {
+                        path: ":pages"
+                    },
+                    React.createElement(Route, {
+                        path: "index",
+                        component: Pages
+                    }),
+                    React.createElement(Route, {
+                        path: ":page",
+                        component: Page
                     })
                 )
             ),

@@ -38,6 +38,7 @@ class Header extends React.Component {
         }
         Apicloud.get('menu', filter, function(err, res) {
             let menu = JSON.parse(res.text)
+            console.log(menu);
             this.setState({
                 menu: menu
             })
@@ -57,24 +58,20 @@ class Header extends React.Component {
         return (
             React.createElement('header', {
                     id: 'header',
-                    className: 'pure-menu pure-menu-horizontal pure-menu-fixed'
+                    className: 'pure-u-1 pure-menu pure-menu-horizontal pure-menu-fixed'
                 },
-                React.createElement('div', {
-                        className: 'container'
+                React.createElement(Link, {
+                    className: 'pure-menu-heading pure-menu-link left',
+                    to: '/'
+                }, '我的理想乡'),
+                React.createElement('ul', {
+                        className: 'pure-menu-list left'
                     },
-                    React.createElement(Link, {
-                        className: 'pure-menu-heading pure-menu-link left',
-                        to: '/'
-                    }, '我的理想乡'),
-                    React.createElement('ul', {
-                            className: 'pure-menu-list left'
-                        },
-                        React.createElement(A, {
-                            to: 'drag',
-                            title: 'drag'
-                        }),
-                        menus
-                    )
+                    React.createElement(A, {
+                        to: 'drag',
+                        title: 'drag'
+                    }),
+                    menus
                 )
             )
         )
