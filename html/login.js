@@ -1,45 +1,55 @@
 'use strict'
+
+const {
+    History
+} = require('react-router')
 const request = require('superagent')
 const {
     Link
 } = ReactRouter;
-var Login = React.createClass({
-    getInitialState: function() {
-        return {
+
+class Login extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
             info: {
                 user_name: 'tianez',
                 password: '123456'
             }
         }
-    },
-    _onChange1: function(e) {
+    }
+    _onChange1(e) {
         console.log(e.target.value);
         let info = this.state.info
         info['user_name'] = e.target.value
         this.setState({
             info: info
         })
-    },
-    _onChange2: function(e) {
+    }
+    _onChange2(e) {
         console.log(e.target.value);
         let info = this.state.info
         info['password'] = e.target.value
         this.setState({
             info: info
         })
-    },
-    _onSubmit: function(e) {
+    }
+    _onSubmit(e) {
         e.preventDefault();
+        let info = this.state.info
         request
-            .post('http://www.mycms.com/login2')
-            .send(this.state.info)
+            .post('http://www.mycms.com/auth/login')
+            .send(info)
             .set('Accept', 'application/json')
             .end(function(err, res) {
-                console.log(err);
-                console.log(res);
-            })
-    },
-    render: function() {
+                if (err) throw err
+                let data = JSON.parse(res.text)
+                storedb('user').insert(data)
+                this.props.history.pushState(null, '/')
+                console.log(data);
+            }.bind(this))
+    }
+    render() {
         return (
             React.createElement('section', {
                     className: 'pure-g'
@@ -53,7 +63,7 @@ var Login = React.createClass({
                                 margin: '0 auto',
                                 display: 'block'
                             },
-                            onSubmit: this._onSubmit
+                            onSubmit: this._onSubmit.bind(this)
                         },
                         React.createElement('fieldset', {},
                             React.createElement('legend', {}, '用户登录'),
@@ -88,5 +98,5 @@ var Login = React.createClass({
             )
         )
     }
-})
+}
 module.exports = Login

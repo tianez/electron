@@ -38,7 +38,7 @@ class Header extends React.Component {
         }
         Apicloud.get('menu', filter, function(err, res) {
             let menu = JSON.parse(res.text)
-            console.log(menu);
+            console.log(menu)
             this.setState({
                 menu: menu
             })
