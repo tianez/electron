@@ -4,7 +4,11 @@ const {
 } = ReactRouter;
 
 const request = require('superagent')
-const L = React.createClass({
+
+class L extends React.Component {
+    constructor() {
+        super()
+    }
     render: function() {
         let p
         let page = this.props.page
@@ -24,10 +28,13 @@ const L = React.createClass({
             }, p)
         )
     }
-})
+}
 
-const Page = React.createClass({
-    render: function() {
+class L extends React.Component {
+    constructor() {
+        super()
+    }
+    render() {
         let i = 1
         let prev = 4
         let total = this.props.page.total || ''
@@ -51,8 +58,7 @@ const Page = React.createClass({
             c = last_page + 1
         }
         if (j > i && j > prev - 1) {
-            let p = React.createElement("li", {
-                },
+            let p = React.createElement("li", {},
                 React.createElement('span', {
                     className: 'pure-button'
                 }, '...')
@@ -120,7 +126,7 @@ const Page = React.createClass({
             )
         )
     }
-})
+}
 const Pages = React.createClass({
     getInitialState: function() {
         return {

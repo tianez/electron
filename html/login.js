@@ -15,39 +15,24 @@ const {
     Button,
     Hidden
 } = require('../components/forms/index')
-var Login = React.createClass({
-    getInitialState: function() {
-        return {
+class Login extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
             info: {
                 user_name: 'tianez',
                 password: '123456'
             }
         }
-    },
-    _onChange1: function(e) {
-        console.log(e.target.value);
-        let info = this.state.info
-        info['user_name'] = e.target.value
-        this.setState({
-            info: info
-        })
-    },
-    _onChange2: function(e) {
-        console.log(e.target.value);
-        let info = this.state.info
-        info['password'] = e.target.value
-        this.setState({
-            info: info
-        })
-    },
-    _onChange: function(name, value) {
+    }
+    _onChange(name, value) {
         let info = this.state.info
         info[name] = value
         this.setState({
             info: info
         })
-    },
-    _onSubmit: function(e) {
+    }
+    _onSubmit(e) {
         e.preventDefault();
         request
             .post('http://www.mycms.com/login2')
@@ -57,8 +42,8 @@ var Login = React.createClass({
                 console.log(err);
                 console.log(res);
             })
-    },
-    render: function() {
+    }
+    render() {
         return (
             React.createElement('section', {
                     className: 'pure-g'
@@ -83,7 +68,7 @@ var Login = React.createClass({
                             info: this.state.info,
                             apiSubmit: false,
                             legend: '用户登录',
-                            onSubmit: this._onSubmit
+                            onSubmit: this._onSubmit.bind(this)
                         },
                         React.createElement(Input, {
                             type: 'text',
@@ -91,7 +76,7 @@ var Login = React.createClass({
                             name: 'user_name',
                             placeholder: 'username',
                             value: this.state.info.user_name,
-                            onChange: this._onChange
+                            onChange: this._onChange.bind(this)
                         }),
                         React.createElement(Input, {
                             type: 'password',
@@ -99,7 +84,7 @@ var Login = React.createClass({
                             name: 'password',
                             placeholder: 'password',
                             value: this.state.info.password,
-                            onChange: this._onChange
+                            onChange: this._onChange.bind(this)
                         }),
                         React.createElement(Button, {
                             value: '登录'
@@ -109,5 +94,5 @@ var Login = React.createClass({
             )
         )
     }
-})
+}
 module.exports = Login
