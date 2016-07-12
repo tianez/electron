@@ -40,7 +40,7 @@ var Layout = React.createClass({
                 React.createElement('section', {
                         id: 'main'
                     },
-                    React.createElement(Sidebar),
+                    // React.createElement(Sidebar),
                     React.createElement('section', {
                         id: 'content',
                         className: 'pure-u-1'

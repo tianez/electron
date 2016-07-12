@@ -74,7 +74,7 @@ class Sidebar extends React.Component {
     constructor() {
         super()
         this.state = {
-            menu: null
+            menu: []
         }
     }
     componentDidMount() {
