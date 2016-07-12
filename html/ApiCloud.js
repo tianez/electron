@@ -58,7 +58,9 @@ var ApiCloud = React.createClass({
             let model = JSON.parse(res.text)
             if (articleId !== 'add') {
                 action = action + '/' + articleId
+                console.log(action);
                 let article = ConfigStore.get(articleId)
+                console.log(article);
                 if (article) {
                     article._method = 'PUT'
                     ConfigActions.update('title', article.title + '-编辑' + title)
@@ -73,6 +75,7 @@ var ApiCloud = React.createClass({
                 } else {
                     Apicloud.get(props.params.clouds + '/' + articleId, '', function(err, res) {
                         let article = JSON.parse(res.text)
+                        console.log(article);
                         article._method = 'PUT'
                         ConfigActions.update('title', article.title + '-编辑' + title)
                         this.setState({
