@@ -9,7 +9,7 @@ class L extends React.Component {
     constructor() {
         super()
     }
-    render: function() {
+    render() {
         let p
         let page = this.props.page
         if (page == this.props.current_page) {
@@ -30,7 +30,7 @@ class L extends React.Component {
     }
 }
 
-class L extends React.Component {
+class Page extends React.Component {
     constructor() {
         super()
     }
