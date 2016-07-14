@@ -12,6 +12,7 @@ const ApiCloud = require('./ApiCloud')
 const Pages = require('./Pages')
 const Page = require('./Page')
 const Login = require('./login')
+const Logout = require('./logout')
 
 var Temp = {
     Layout: Layout,
@@ -26,5 +27,6 @@ var Temp = {
     Pages: Pages,
     Page: Page,
     Login: Login,
+    Logout: Logout
 }
 module.exports = Temp

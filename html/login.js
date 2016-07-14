@@ -41,18 +41,9 @@ class Login extends React.Component {
             .set('Cookie', 'usern=tianez')
             .end(function(err, res) {
                 if (err) throw err
-                console.log(res);
-                console.log(res.xhr);
-                let setCookie2 = res.header['set-cookie']
-                console.log(setCookie2.length);
-                for (let i = 0; i < setCookie2.length; i++) {
-                    console.log(setCookie2[i]);
-                }
                 let data = JSON.parse(res.text)
                 storedb('user').insert(data)
-                    // this.props.history.pushState(null, '/')
-                console.log(data);
-                console.log(document.cookie);
+                this.props.history.pushState(null, '/')
             }.bind(this))
     }
     render() {

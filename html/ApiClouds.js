@@ -24,7 +24,6 @@ var ApiClouds = React.createClass({
     },
     componentWillMount: function() {
         let clouds = this.props.params.clouds
-        console.log(this.props[clouds]);
         this.setState({
             table: this.props[clouds]
         })
@@ -58,7 +57,6 @@ var ApiClouds = React.createClass({
                 ConfigActions.msg(res.status + 'error');
             } else {
                 let data = JSON.parse(res.text)
-                console.log(data);
                 if (data.res == 404) {
                     ConfigActions.update('title', data.msg)
                     this.setState({
@@ -123,39 +121,27 @@ var ApiClouds = React.createClass({
                     this.state.table.title
                 ),
                 React.createElement('div', {
-                        className: 'pure-u-1 pure-menu pure-menu-open pure-menu-horizontal'
+                        className: 'pure-u-1 filter'
                     },
                     React.createElement('a', {
-                            className: 'pure-menu-heading'
+                            className: 'pure-menu-link'
                         },
                         '筛选'
                     ),
-                    React.createElement('ul', {
-                            className: 'pure-menu-list'
+                    React.createElement(Link, {
+                            to: '/apicloud/' + this.props.params.clouds,
+                            className: 'pure-menu-link'
                         },
-                        React.createElement('li', {
-                                className: 'pure-menu-item'
-                            },
-                            React.createElement(Link, {
-                                    to: '/apicloud/' + this.props.params.clouds,
-                                    className: 'pure-menu-link'
-                                },
-                                '全部'
-                            )
-                        ),
-                        React.createElement('li', {
-                                className: 'pure-menu-item'
-                            },
-                            React.createElement(Link, {
-                                    to: '/apicloud/' + this.props.params.clouds,
-                                    className: 'pure-menu-link',
-                                    query: {
-                                        state: 1
-                                    }
-                                },
-                                '正常'
-                            )
-                        )
+                        '全部'
+                    ),
+                    React.createElement(Link, {
+                            to: '/apicloud/' + this.props.params.clouds,
+                            className: 'pure-menu-link',
+                            query: {
+                                state: 1
+                            }
+                        },
+                        '正常'
                     )
                 ),
                 React.createElement('div', {

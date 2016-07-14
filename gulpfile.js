@@ -54,7 +54,6 @@ gulp.task('web', function(cb) {
     runSequence('webpack', 'less', ['min-css', 'min-js'], cb);
 });
 
-
 gulp.task('connect', function() {
     connect.server({
         port: 8887,

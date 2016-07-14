@@ -38,7 +38,6 @@ class Header extends React.Component {
         }
         Apicloud.get('menu', filter, function(err, res) {
             let menu = JSON.parse(res.text)
-            console.log(menu)
             this.setState({
                 menu: menu
             })
@@ -70,6 +69,10 @@ class Header extends React.Component {
                     React.createElement(A, {
                         to: 'login',
                         title: 'login'
+                    }),
+                    React.createElement(A, {
+                        to: 'logout',
+                        title: 'logout'
                     }),
                     menus
                 )

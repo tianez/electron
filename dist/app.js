@@ -92,14 +92,28 @@
 	var Pages = _require.Pages;
 	var Page = _require.Page;
 	var Login = _require.Login;
+	var Logout = _require.Logout;
 
 
-	__webpack_require__(268);
+	__webpack_require__(269);
+
+	function GetRequest() {
+	    var url = location.search; //获取url中"?"符后的字串
+	    var theRequest = new Object();
+	    if (url.indexOf("?") != -1) {
+	        var str = url.substr(1);
+	        strs = str.split("&");
+	        for (var i = 0; i < strs.length; i++) {
+	            theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+	        }
+	    }
+	    return theRequest;
+	}
+	window.GetRequest = GetRequest();
 
 	function onEnter(nextState, replace) {
 	    var pathname = nextState.location.pathname;
 	    var user = storedb('user').find() ? true : false;
-	    console.log(storedb('user').find());
 	    if (!user && pathname !== 'login' && pathname !== '/login') {
 	        ConfigActions.update('msg', '你还没有登录，请先登录！');
 	        replace({
@@ -116,10 +130,10 @@
 	    history: hashHistory
 	}, React.createElement(Route, {
 	    path: "/",
-	    component: Layout,
-	    onEnter: onEnter
+	    component: Layout
 	}, React.createElement(IndexRoute, {
-	    component: Home
+	    component: Home,
+	    onEnter: onEnter
 	}), React.createElement(Route, {
 	    path: "drag",
 	    component: Drag
@@ -153,6 +167,9 @@
 	    path: "login",
 	    component: Login
 	}), React.createElement(Route, {
+	    path: "logout",
+	    component: Logout
+	}), React.createElement(Route, {
 	    path: "*",
 	    component: Nomatch
 	}));
@@ -176,6 +193,7 @@
 	var Pages = __webpack_require__(265);
 	var Page = __webpack_require__(266);
 	var Login = __webpack_require__(267);
+	var Logout = __webpack_require__(268);
 
 	var Temp = {
 	    Layout: Layout,
@@ -189,7 +207,8 @@
 	    ApiCloud: ApiCloud,
 	    Pages: Pages,
 	    Page: Page,
-	    Login: Login
+	    Login: Login,
+	    Logout: Logout
 	};
 	module.exports = Temp;
 
@@ -240,9 +259,7 @@
 	            //     },
 	            React.createElement(Header), React.createElement('section', {
 	                id: 'main'
-	            },
-	            // React.createElement(Sidebar),
-	            React.createElement('section', {
+	            }, React.createElement(Sidebar), React.createElement('section', {
 	                id: 'content',
 	                className: 'pure-u-1'
 	            }, this.props.children)), React.createElement(Footer)
@@ -267,6 +284,7 @@
 	    if (window.navigator.onLine == true) {
 	        var now = Date.now();
 	        var key = SHA1(AppId + 'UZ' + AppKey + 'UZ' + now) + "." + now;
+	        storedb('user').remove();
 	        var token = storedb('user').find() ? storedb('user').find()[0].id : '';
 	        request.get(AppUrl + url).set('X-APICloud-AppId', AppId).set('X-APICloud-AppKey', key).set('authorization', token).query({
 	            filter: JSON.stringify(filter)
@@ -1956,7 +1974,6 @@
 	            };
 	            Apicloud.get('menu', filter, function (err, res) {
 	                var menu = JSON.parse(res.text);
-	                console.log(menu);
 	                this.setState({
 	                    menu: menu
 	                });
@@ -1965,6 +1982,19 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var user = storedb('user').find() ? true : false;
+	            var islogin = void 0;
+	            if (user) {
+	                islogin = React.createElement(A, {
+	                    to: 'logout',
+	                    title: '登出'
+	                });
+	            } else {
+	                islogin = React.createElement(A, {
+	                    to: 'login',
+	                    title: '登录'
+	                });
+	            }
 	            var menus = void 0;
 	            if (this.state.menu) {
 	                menus = this.state.menu.map(function (d, index) {
@@ -1983,10 +2013,7 @@
 	                to: '/'
 	            }, '我的理想乡'), React.createElement('ul', {
 	                className: 'pure-menu-list left'
-	            }, React.createElement(A, {
-	                to: 'login',
-	                title: 'login'
-	            }), menus));
+	            }, islogin, menus));
 	        }
 	    }]);
 
@@ -2113,15 +2140,15 @@
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 	            var url = 'http://www.mycms.com/react/sidebar';
-	            request.get(url).end(function (err, res) {
-	                console.log(res);
-	                if (err) throw err;
-	                var data = JSON.parse(res.text);
-	                console.log(data);
-	                this.setState({
-	                    menu: data
-	                });
-	            }.bind(this));
+	            // request.get(url)
+	            //     .end(function(err, res) {
+	            //         console.log(res);
+	            //         if (err) throw err;
+	            //         var data = JSON.parse(res.text);
+	            //         this.setState({
+	            //             menu: data
+	            //         });
+	            //     }.bind(this))
 	        }
 	    }, {
 	        key: 'render',
@@ -2394,48 +2421,68 @@
 
 	'use strict';
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 	var Apicloud = __webpack_require__(3);
 	var classNames = __webpack_require__(18);
 
-	var Form = React.createClass({
-	    displayName: 'Form',
+	var Form = function (_React$Component) {
+	    _inherits(Form, _React$Component);
 
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            apiSubmit: true
-	        };
-	    },
-	    handleSubmit: function handleSubmit(e) {
-	        e.preventDefault();
-	        if (this.props.locked) {
-	            return;
-	        }
-	        if (this.props.apiSubmit) {
-	            Apicloud.post(this.props.action, this.props.info, function (err, res) {
-	                var data = JSON.parse(res.text);
-	                if (data.error) {
-	                    ConfigActions.update('msg', data.error.message);
-	                } else {
-	                    this.props.onSubmit(data);
-	                }
-	            }.bind(this));
-	        } else {
-	            this.props.onSubmit(e);
-	        }
-	    },
-	    render: function render() {
-	        return React.createElement('form', {
-	            className: 'form-fields form-horizontal',
-	            role: 'form',
-	            // encType: 'multipart/form-data',
-	            onSubmit: this.handleSubmit
-	        }, React.createElement('fieldset', {
-	            className: 'form-fieldset'
-	        }, React.createElement('legend', {
-	            className: 'form-legend'
-	        }, this.props.legend), this.props.children));
+	    function Form() {
+	        _classCallCheck(this, Form);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Form).call(this));
 	    }
-	});
+
+	    _createClass(Form, [{
+	        key: 'handleSubmit',
+	        value: function handleSubmit(e) {
+	            e.preventDefault();
+	            if (this.props.locked) {
+	                return;
+	            }
+	            if (this.props.apiSubmit) {
+	                Apicloud.post(this.props.action, this.props.info, function (err, res) {
+	                    var data = JSON.parse(res.text);
+	                    if (data.error) {
+	                        ConfigActions.update('msg', data.error.message);
+	                    } else {
+	                        this.props.onSubmit(data);
+	                    }
+	                }.bind(this));
+	            } else {
+	                this.props.onSubmit(e);
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return React.createElement('form', {
+	                className: 'form-fields form-horizontal',
+	                role: 'form',
+	                // encType: 'multipart/form-data',
+	                onSubmit: this.handleSubmit.bind(this)
+	            }, React.createElement('fieldset', {
+	                className: 'form-fieldset'
+	            }, React.createElement('legend', {
+	                className: 'form-legend'
+	            }, this.props.legend), this.props.children));
+	        }
+	    }]);
+
+	    return Form;
+	}(React.Component);
+
+	Form.defaultProps = {
+	    apiSubmit: true
+	};
 	module.exports = Form;
 
 /***/ },
@@ -2509,104 +2556,130 @@
 
 	'use strict';
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 	var classNames = __webpack_require__(18);
 	var FormGroup = __webpack_require__(21);
 
-	var Input = React.createClass({
-	    displayName: 'Input',
+	var Input = function (_React$Component) {
+	    _inherits(Input, _React$Component);
 
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            type: 'text',
-	            value: '',
-	            autocomplete: 'off',
-	            required: 'required'
+	    function Input(props) {
+	        _classCallCheck(this, Input);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Input).call(this, props));
+
+	        _this.state = {
+	            value: props.value,
+	            help: props.help,
+	            length: props.value.length || 0
 	        };
-	    },
-	    getInitialState: function getInitialState() {
-	        return {
-	            value: this.props.value,
-	            help: this.props.help,
-	            length: this.props.value.length || 0
-	        };
-	    },
-	    componentWillMount: function componentWillMount() {
-	        var length = this.props.value.length || 0;
-	        var help = this.props.help || '请输入' + this.props.title;
-	        this.setState({
-	            help: help
-	        });
-	    },
-	    shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-	        return nextProps.value !== this.props.value;
-	    },
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	        this.state = {
-	            value: nextProps.value
-	        };
-	    },
-	    _onChange: function _onChange(e) {
-	        var error = void 0;
-	        var warning = void 0;
-	        var success = void 0;
-	        var value = e.target.value.replace(/(^\s*)|(\s*$)/, "");
-	        var length = value.length;
-	        var help = this.props.help || '请输入' + this.props.title;
-	        if (length > 0) {
-	            if (this.props.min && length < this.props.min) {
-	                help = '请输入至少' + this.props.min + '个字符！';
-	                error = true;
-	            } else if (this.props.max && length > this.props.max) {
-	                help = '请输入至多' + this.props.max + '个字符！';
-	                error = true;
-	            }
-	            if (!error) {
-	                success = true;
-	            }
-	        } else if (this.props.required) {
-	            help = this.props.title + '必须填写！';
-	            warning = true;
-	        }
-	        this.setState({
-	            value: value,
-	            help: help,
-	            length: length,
-	            error: error,
-	            warning: warning,
-	            success: success
-	        });
-	        if (this.props.onChange) {
-	            this.props.onChange(this.props.name, value);
-	        }
-	    },
-	    render: function render() {
-	        var Class = classNames({
-	            'has-error': this.state.error,
-	            'has-warning': this.state.warning,
-	            'has-success': this.state.success
-	        });
-	        var limit = ' ' + this.state.length;
-	        if (this.props.max) {
-	            limit += ' / ' + this.props.max;
-	        }
-	        return React.createElement(FormGroup, {
-	            class: Class,
-	            title: this.props.title,
-	            limit: limit,
-	            help: this.state.help
-	        }, React.createElement('input', {
-	            className: 'form-input',
-	            type: this.props.type,
-	            max: this.props.max,
-	            min: this.props.min,
-	            placeholder: this.props.placeholder,
-	            disabled: this.props.disabled,
-	            autoComplete: this.props.autoComplete,
-	            value: this.state.value,
-	            onChange: this._onChange
-	        }));
+	        return _this;
 	    }
-	});
+
+	    _createClass(Input, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            var length = this.props.value.length || 0;
+	            var help = this.props.help || '请输入' + this.props.title;
+	            this.setState({
+	                help: help
+	            });
+	        }
+	    }, {
+	        key: 'shouldComponentUpdate',
+	        value: function shouldComponentUpdate(nextProps, nextState) {
+	            return nextProps.value !== this.props.value;
+	        }
+	    }, {
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(nextProps) {
+	            this.state = {
+	                value: nextProps.value
+	            };
+	        }
+	    }, {
+	        key: '_onChange',
+	        value: function _onChange(e) {
+	            var error = void 0;
+	            var warning = void 0;
+	            var success = void 0;
+	            var value = e.target.value.replace(/(^\s*)|(\s*$)/, "");
+	            var length = value.length;
+	            var help = this.props.help || '请输入' + this.props.title;
+	            if (length > 0) {
+	                if (this.props.min && length < this.props.min) {
+	                    help = '请输入至少' + this.props.min + '个字符！';
+	                    error = true;
+	                } else if (this.props.max && length > this.props.max) {
+	                    help = '请输入至多' + this.props.max + '个字符！';
+	                    error = true;
+	                }
+	                if (!error) {
+	                    success = true;
+	                }
+	            } else if (this.props.required) {
+	                help = this.props.title + '必须填写！';
+	                warning = true;
+	            }
+	            this.setState({
+	                value: value,
+	                help: help,
+	                length: length,
+	                error: error,
+	                warning: warning,
+	                success: success
+	            });
+	            if (this.props.onChange) {
+	                this.props.onChange(this.props.name, value);
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var Class = classNames({
+	                'has-error': this.state.error,
+	                'has-warning': this.state.warning,
+	                'has-success': this.state.success
+	            });
+	            var limit = ' ' + this.state.length;
+	            if (this.props.max) {
+	                limit += ' / ' + this.props.max;
+	            }
+	            return React.createElement(FormGroup, {
+	                class: Class,
+	                title: this.props.title,
+	                limit: limit,
+	                help: this.state.help
+	            }, React.createElement('input', {
+	                className: 'form-input',
+	                type: this.props.type,
+	                max: this.props.max,
+	                min: this.props.min,
+	                placeholder: this.props.placeholder,
+	                disabled: this.props.disabled,
+	                autoComplete: this.props.autoComplete,
+	                value: this.state.value,
+	                onChange: this._onChange.bind(this)
+	            }));
+	        }
+	    }]);
+
+	    return Input;
+	}(React.Component);
+
+	Input.defaultProps = {
+	    type: 'text',
+	    value: '',
+	    autocomplete: 'off',
+	    required: 'required'
+	};
 
 	module.exports = Input;
 
@@ -2616,26 +2689,46 @@
 
 	'use strict';
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 	var classNames = __webpack_require__(18);
 
-	var FormGroup = React.createClass({
-	    displayName: 'FormGroup',
+	var FormGroup = function (_React$Component) {
+	    _inherits(FormGroup, _React$Component);
 
-	    render: function render() {
-	        var classname = this.props.class ? 'form-group ' + this.props.class : 'form-group';
-	        return React.createElement('div', {
-	            className: classname
-	        }, React.createElement('label', {
-	            className: 'form-label'
-	        }, this.props.title), React.createElement('div', {
-	            className: 'form-control'
-	        }, this.props.limit ? React.createElement('i', {
-	            className: 'form-ico fa'
-	        }, this.props.limit) : null, this.props.children, this.props.help ? React.createElement('span', {
-	            className: 'form-help'
-	        }, this.props.help) : null));
+	    function FormGroup() {
+	        _classCallCheck(this, FormGroup);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FormGroup).call(this));
 	    }
-	});
+
+	    _createClass(FormGroup, [{
+	        key: 'render',
+	        value: function render() {
+	            var classname = this.props.class ? 'form-group ' + this.props.class : 'form-group';
+	            return React.createElement('div', {
+	                className: classname
+	            }, React.createElement('label', {
+	                className: 'form-label'
+	            }, this.props.title), React.createElement('div', {
+	                className: 'form-control'
+	            }, this.props.limit ? React.createElement('i', {
+	                className: 'form-ico fa'
+	            }, this.props.limit) : null, this.props.children, this.props.help ? React.createElement('span', {
+	                className: 'form-help'
+	            }, this.props.help) : null));
+	        }
+	    }]);
+
+	    return FormGroup;
+	}(React.Component);
+
 	module.exports = FormGroup;
 
 /***/ },
@@ -2644,119 +2737,149 @@
 
 	'use strict';
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 	var classNames = __webpack_require__(18);
 	var FormGroup = __webpack_require__(21);
 
-	var Textarea = React.createClass({
-	    displayName: 'Textarea',
+	var Textarea = function (_React$Component) {
+	    _inherits(Textarea, _React$Component);
 
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            title: '字段名称',
-	            value: '',
-	            placeholder: '',
-	            help: '',
-	            disabled: '',
-	            autocomplete: 'off',
-	            required: 'required',
-	            min: 2,
-	            rows: 2
-	        };
-	    },
-	    getInitialState: function getInitialState() {
-	        return {
-	            value: this.props.value,
-	            help: this.props.help,
+	    function Textarea() {
+	        _classCallCheck(this, Textarea);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Textarea).call(this));
+
+	        _this.state = {
+	            value: props.value,
+	            help: props.help,
 	            error: false,
 	            warning: false,
 	            success: false
 	        };
-	    },
-	    componentWillMount: function componentWillMount() {
-	        var length = this.props.value.length;
-	        var help = this.props.help || '请输入' + this.props.title;
-	        this.setState({
-	            help: help,
-	            length: length
-	        });
-	    },
-	    shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-	        return nextProps.value !== this.props.value;
-	    },
-	    _onChange: function _onChange(e) {
-	        var error = void 0;
-	        var warning = void 0;
-	        var success = void 0;
-	        var value = e.target.value.replace(/(^\s*)|(\s*$)/, "");
-	        var length = value.length;
-	        var help = this.props.help || '请输入' + this.props.title;
-	        if (length > 0) {
-	            if (this.props.min && length < this.props.min) {
-	                help = '请输入至少' + this.props.min + '个字符！';
-	                error = true;
-	            } else if (this.props.max && length > this.props.max) {
-	                help = '请输入至多' + this.props.max + '个字符！';
-	                error = true;
-	            }
-	            if (!error) {
-	                success = true;
-	            }
-	        } else if (this.props.required) {
-	            help = this.props.title + '必须填写！';
-	            warning = true;
-	        }
-	        this.setState({
-	            value: value,
-	            help: help,
-	            length: length,
-	            error: error,
-	            warning: warning,
-	            success: success
-	        });
-	        if (this.props.onChange) {
-	            this.props.onChange(this.props.name, value);
-	        }
-	    },
-	    onWheel: function onWheel(obj) {
-	        console.log(obj);
-	        console.log(obj.currentTarget.offsetTop);
-	    },
-	    onKeyPress: function onKeyPress(obj) {
-	        console.log(obj);
-	        console.log(obj.nativeEvent.charCode);
-	    },
-	    onCopy: function onCopy(obj) {
-	        console.log(obj);
-	    },
-	    render: function render() {
-	        var Class = classNames({
-	            'has-error': this.state.error,
-	            'has-warning': this.state.warning,
-	            'has-success': this.state.success
-	        });
-	        var limit = ' ' + this.state.length;
-	        if (this.props.max) {
-	            limit += ' / ' + this.props.max;
-	        }
-	        return React.createElement(FormGroup, {
-	            class: Class,
-	            title: this.props.title,
-	            limit: limit,
-	            help: this.state.help,
-	            onWheel: this.onWheel,
-	            onCopy: this.onCopy,
-	            onKeyPress: this.onKeyPress
-	        }, React.createElement('textarea', {
-	            className: 'form-textarea',
-	            rows: this.props.rows,
-	            placeholder: this.props.placeholder,
-	            disabled: this.props.disabled,
-	            autoComplete: this.props.autoComplete,
-	            value: this.state.value,
-	            onChange: this._onChange
-	        }));
+	        return _this;
 	    }
-	});
+
+	    _createClass(Textarea, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            var length = this.props.value.length;
+	            var help = this.props.help || '请输入' + this.props.title;
+	            this.setState({
+	                help: help,
+	                length: length
+	            });
+	        }
+	    }, {
+	        key: 'shouldComponentUpdate',
+	        value: function shouldComponentUpdate(nextProps, nextState) {
+	            return nextProps.value !== this.props.value;
+	        }
+	    }, {
+	        key: '_onChange',
+	        value: function _onChange(e) {
+	            var error = void 0;
+	            var warning = void 0;
+	            var success = void 0;
+	            var value = e.target.value.replace(/(^\s*)|(\s*$)/, "");
+	            var length = value.length;
+	            var help = this.props.help || '请输入' + this.props.title;
+	            if (length > 0) {
+	                if (this.props.min && length < this.props.min) {
+	                    help = '请输入至少' + this.props.min + '个字符！';
+	                    error = true;
+	                } else if (this.props.max && length > this.props.max) {
+	                    help = '请输入至多' + this.props.max + '个字符！';
+	                    error = true;
+	                }
+	                if (!error) {
+	                    success = true;
+	                }
+	            } else if (this.props.required) {
+	                help = this.props.title + '必须填写！';
+	                warning = true;
+	            }
+	            this.setState({
+	                value: value,
+	                help: help,
+	                length: length,
+	                error: error,
+	                warning: warning,
+	                success: success
+	            });
+	            if (this.props.onChange) {
+	                this.props.onChange(this.props.name, value);
+	            }
+	        }
+	    }, {
+	        key: 'onWheel',
+	        value: function onWheel(obj) {
+	            console.log(obj);
+	            console.log(obj.currentTarget.offsetTop);
+	        }
+	    }, {
+	        key: 'onKeyPress',
+	        value: function onKeyPress(obj) {
+	            console.log(obj);
+	            console.log(obj.nativeEvent.charCode);
+	        }
+	    }, {
+	        key: 'onCopy',
+	        value: function onCopy(obj) {
+	            console.log(obj);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var Class = classNames({
+	                'has-error': this.state.error,
+	                'has-warning': this.state.warning,
+	                'has-success': this.state.success
+	            });
+	            var limit = ' ' + this.state.length;
+	            if (this.props.max) {
+	                limit += ' / ' + this.props.max;
+	            }
+	            return React.createElement(FormGroup, {
+	                class: Class,
+	                title: this.props.title,
+	                limit: limit,
+	                help: this.state.help,
+	                onWheel: this.onWheel.bind(this),
+	                onCopy: this.onCopy.bind(this),
+	                onKeyPress: this.onKeyPress.bind(this)
+	            }, React.createElement('textarea', {
+	                className: 'form-textarea',
+	                rows: this.props.rows,
+	                placeholder: this.props.placeholder,
+	                disabled: this.props.disabled,
+	                autoComplete: this.props.autoComplete,
+	                value: this.state.value,
+	                onChange: this._onChange.bind(this)
+	            }));
+	        }
+	    }]);
+
+	    return Textarea;
+	}(React.Component);
+
+	Textarea.defaultProps = {
+	    title: '字段名称',
+	    value: '',
+	    placeholder: '',
+	    help: '',
+	    disabled: '',
+	    autocomplete: 'off',
+	    required: 'required',
+	    min: 2,
+	    rows: 2
+	};
 
 	module.exports = Textarea;
 
@@ -6491,36 +6614,54 @@
 
 	'use strict';
 
-	var Canvas = React.createClass({
-	    displayName: 'Canvas',
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            width: 200
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Canvas = function (_React$Component) {
+	    _inherits(Canvas, _React$Component);
+
+	    function Canvas(props) {
+	        _classCallCheck(this, Canvas);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Canvas).call(this, props));
+
+	        _this.state = {
+	            width: props.width,
+	            height: props.height || props.width
 	        };
-	    },
-	    getInitialState: function getInitialState() {
-	        return {
-	            width: this.props.width,
-	            height: this.props.height || this.props.width
-	        };
-	    },
-	    render: function render() {
-	        return React.createElement('div', {
-	            style: {
-	                width: this.state.width,
-	                height: this.state.height
-	            }
-	        }, React.createElement('img', {
-	            style: {
-	                width: this.state.width,
-	                height: this.state.height,
-	                display: 'block'
-	            },
-	            src: this.props.src
-	        }));
+	        return _this;
 	    }
-	});
+
+	    _createClass(Canvas, [{
+	        key: 'render',
+	        value: function render() {
+	            return React.createElement('div', {
+	                style: {
+	                    width: this.state.width,
+	                    height: this.state.height
+	                }
+	            }, React.createElement('img', {
+	                style: {
+	                    width: this.state.width,
+	                    height: this.state.height,
+	                    display: 'block'
+	                },
+	                src: this.props.src
+	            }));
+	        }
+	    }]);
+
+	    return Canvas;
+	}(React.Component);
+
+	Canvas.defaultProps = {
+	    width: 200
+	};
 	module.exports = Canvas;
 
 /***/ },
@@ -13149,37 +13290,32 @@
 
 	'use strict';
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 	var classNames = __webpack_require__(18);
 	var FormGroup = __webpack_require__(21);
 
-	var Radio = React.createClass({
-	    displayName: 'Radio',
+	var Radio = function (_React$Component) {
+	    _inherits(Radio, _React$Component);
 
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            title: '单选框',
-	            type: 'radio',
-	            value: 2,
-	            options: [{
-	                title: '选项1',
-	                value: 1
-	            }, {
-	                title: '选项2',
-	                value: 2
-	            }],
-	            name: 'state',
-	            placeholder: '',
-	            help: '',
-	            disabled: '',
-	            required: 'required'
-	        };
-	    },
-	    getInitialState: function getInitialState() {
+	    function Radio() {
+	        var _ret;
+
+	        _classCallCheck(this, Radio);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Radio).call(this));
+
 	        var option = void 0;
-	        switch (this.props.options) {
+	        switch (props.options) {
 	            case "roles":
 	                option = [];
-	                ConfigStore.get(this.props.options).map(function (d, index) {
+	                ConfigStore.get(props.options).map(function (d, index) {
 	                    var op = {
 	                        title: d.name,
 	                        value: d.id
@@ -13188,57 +13324,82 @@
 	                });
 	                break;
 	            default:
-	                option = JSON.parse(this.props.options);
+	                option = JSON.parse(props.options);
 	        }
-	        return {
-	            files: this.props.files,
-	            value: this.props.value,
-	            help: this.props.help,
+	        return _ret = {
+	            files: props.files,
+	            value: props.value,
+	            help: props.help,
 	            option: option
-	        };
-	    },
-	    _onChange: function _onChange(e) {
-	        var value = e.target.value;
-	        this.setState({
-	            value: value
-	        });
-	        if (this.props.onChange) {
-	            this.props.onChange(this.props.name, value);
-	        }
-	    },
-	    render: function render() {
-	        var value = this.state.value;
-	        var name = this.props.name;
-	        var options = this.state.option.map(function (d, index) {
-	            var checked = '';
-	            if (value == d.value) {
-	                checked = 'checked';
+	        }, _possibleConstructorReturn(_this, _ret);
+	    }
+
+	    _createClass(Radio, [{
+	        key: '_onChange',
+	        value: function _onChange(e) {
+	            var value = e.target.value;
+	            this.setState({
+	                value: value
+	            });
+	            if (this.props.onChange) {
+	                this.props.onChange(this.props.name, value);
 	            }
-	            var typeClass = 'radio';
-	            return React.createElement('label', {
-	                key: index,
-	                className: 'form-radio',
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var value = this.state.value;
+	            var name = this.props.name;
+	            var options = this.state.option.map(function (d, index) {
+	                var checked = '';
+	                if (value == d.value) {
+	                    checked = 'checked';
+	                }
+	                var typeClass = 'radio';
+	                return React.createElement('label', {
+	                    key: index,
+	                    className: 'form-radio',
+	                    title: this.props.title,
+	                    help: this.state.help
+	                }, React.createElement('div', {
+	                    className: typeClass
+	                }, React.createElement('span', {
+	                    className: checked
+	                }, React.createElement('input', {
+	                    type: 'radio',
+	                    name: name,
+	                    value: d.value,
+	                    checked: checked,
+	                    onChange: this._onChange
+	                }))), React.createElement('span', null, d.title));
+	            }.bind(this));
+	            return React.createElement(FormGroup, {
 	                title: this.props.title,
 	                help: this.state.help
-	            }, React.createElement('div', {
-	                className: typeClass
-	            }, React.createElement('span', {
-	                className: checked
-	            }, React.createElement('input', {
-	                type: 'radio',
-	                name: name,
-	                value: d.value,
-	                checked: checked,
-	                onChange: this._onChange
-	            }))), React.createElement('span', null, d.title));
-	        }.bind(this));
-	        return React.createElement(FormGroup, {
-	            title: this.props.title,
-	            help: this.state.help
-	        }, options);
-	    }
-	});
+	            }, options);
+	        }
+	    }]);
 
+	    return Radio;
+	}(React.Component);
+
+	Radio.defaultProps = {
+	    title: '单选框',
+	    type: 'radio',
+	    value: 2,
+	    options: [{
+	        title: '选项1',
+	        value: 1
+	    }, {
+	        title: '选项2',
+	        value: 2
+	    }],
+	    name: 'state',
+	    placeholder: '',
+	    help: '',
+	    disabled: '',
+	    required: 'required'
+	};
 	module.exports = Radio;
 
 /***/ },
@@ -13247,37 +13408,30 @@
 
 	'use strict';
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 	var classNames = __webpack_require__(18);
 	var FormGroup = __webpack_require__(21);
 
-	var Checkbox = React.createClass({
-	    displayName: 'Checkbox',
+	var Checkbox = function (_React$Component) {
+	    _inherits(Checkbox, _React$Component);
 
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            title: '多选框',
-	            type: 'checkbox',
-	            value: [2],
-	            options: [{
-	                title: '选项1',
-	                value: 1
-	            }, {
-	                title: '选项2',
-	                value: 2
-	            }],
-	            name: 'state',
-	            placeholder: '',
-	            help: '',
-	            disabled: '',
-	            required: 'required'
-	        };
-	    },
-	    getInitialState: function getInitialState() {
+	    function Checkbox(props) {
+	        _classCallCheck(this, Checkbox);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Checkbox).call(this, props));
+
 	        var option = void 0;
-	        switch (this.props.options) {
+	        switch (props.options) {
 	            case "roles":
 	                option = [];
-	                ConfigStore.get(this.props.options).map(function (d, index) {
+	                ConfigStore.get(props.options).map(function (d, index) {
 	                    var op = {
 	                        title: d.name,
 	                        value: d.id
@@ -13286,72 +13440,99 @@
 	                });
 	                break;
 	            default:
-	                option = JSON.parse(this.props.options);
+	                option = JSON.parse(props.options);
 	        }
-	        var value = this.props.value;
+	        var value = props.value;
 	        if (value) {
 	            value = JSON.parse(value);
 	        } else {
 	            value = [];
 	        }
-	        return {
+	        _this.state = {
 	            value: value,
-	            help: this.props.help,
+	            help: props.help,
 	            option: option
 	        };
-	    },
-	    _onChange: function _onChange(e) {
-	        var type = this.props.type;
-	        var v = e.target.value;
-	        var value = this.state.value;
-	        var index = value.indexOf(v);
-	        if (index == -1) {
-	            value.push(v);
-	        } else {
-	            value.splice(index, 1);
-	        }
-	        this.setState({
-	            value: value
-	        });
-	        value = JSON.stringify(value);
-	        if (this.props.onChange) {
-	            this.props.onChange(this.props.name, value);
-	        }
-	    },
-	    render: function render() {
-	        var value = this.state.value;
-	        var name = this.props.name;
-	        // let option = JSON.parse(this.props.options)
-	        // let option = this.props.options
-	        var options = this.state.option.map(function (d, index) {
-	            var checked = '';
-	            if (value.indexOf(d.value) > -1) {
-	                checked = 'checked';
+	        return _this;
+	    }
+
+	    _createClass(Checkbox, [{
+	        key: '_onChange',
+	        value: function _onChange(e) {
+	            var type = this.props.type;
+	            var v = e.target.value;
+	            var value = this.state.value;
+	            var index = value.indexOf(v);
+	            if (index == -1) {
+	                value.push(v);
+	            } else {
+	                value.splice(index, 1);
 	            }
-	            var typeClass = 'checker';
-	            return React.createElement('label', {
-	                key: index,
-	                className: 'form-radio',
+	            this.setState({
+	                value: value
+	            });
+	            value = JSON.stringify(value);
+	            if (this.props.onChange) {
+	                this.props.onChange(this.props.name, value);
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var value = this.state.value;
+	            var name = this.props.name;
+	            // let option = JSON.parse(this.props.options)
+	            // let option = this.props.options
+	            var options = this.state.option.map(function (d, index) {
+	                var checked = '';
+	                if (value.indexOf(d.value) > -1) {
+	                    checked = 'checked';
+	                }
+	                var typeClass = 'checker';
+	                return React.createElement('label', {
+	                    key: index,
+	                    className: 'form-radio',
+	                    title: this.props.title,
+	                    help: this.state.help
+	                }, React.createElement('div', {
+	                    className: typeClass
+	                }, React.createElement('span', {
+	                    className: checked
+	                }, React.createElement('input', {
+	                    type: 'checkbox',
+	                    name: name,
+	                    value: d.value,
+	                    checked: checked,
+	                    onChange: this._onChange
+	                }))), React.createElement('span', null, d.title));
+	            }.bind(this));
+	            return React.createElement(FormGroup, {
 	                title: this.props.title,
 	                help: this.state.help
-	            }, React.createElement('div', {
-	                className: typeClass
-	            }, React.createElement('span', {
-	                className: checked
-	            }, React.createElement('input', {
-	                type: 'checkbox',
-	                name: name,
-	                value: d.value,
-	                checked: checked,
-	                onChange: this._onChange
-	            }))), React.createElement('span', null, d.title));
-	        }.bind(this));
-	        return React.createElement(FormGroup, {
-	            title: this.props.title,
-	            help: this.state.help
-	        }, options);
-	    }
-	});
+	            }, options);
+	        }
+	    }]);
+
+	    return Checkbox;
+	}(React.Component);
+
+	Checkbox.defaultProps = {
+	    title: '多选框',
+	    type: 'checkbox',
+	    value: [2],
+	    options: [{
+	        title: '选项1',
+	        value: 1
+	    }, {
+	        title: '选项2',
+	        value: 2
+	    }],
+	    name: 'state',
+	    placeholder: '',
+	    help: '',
+	    disabled: '',
+	    required: 'required'
+	};
 	module.exports = Checkbox;
 
 /***/ },
@@ -13452,7 +13633,7 @@
 	            }, React.createElement('div', {
 	                className: 'form-control'
 	            }, React.createElement('input', {
-	                className: 'pure-button pure-button-primary',
+	                className: 'form-button pure-button pure-button-primary',
 	                type: 'submit',
 	                disabled: this.props.disabled,
 	                value: this.props.value
@@ -13475,17 +13656,36 @@
 
 	'use strict';
 
-	var Hidden = React.createClass({
-	    displayName: 'Hidden',
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	    render: function render() {
-	        return React.createElement('input', {
-	            type: 'hidden',
-	            disabled: this.props.disabled,
-	            value: this.props.value
-	        });
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Hidden = function (_React$Component) {
+	    _inherits(Hidden, _React$Component);
+
+	    function Hidden() {
+	        _classCallCheck(this, Hidden);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Hidden).call(this));
 	    }
-	});
+
+	    _createClass(Hidden, [{
+	        key: 'render',
+	        value: function render() {
+	            return React.createElement('input', {
+	                type: 'hidden',
+	                disabled: this.props.disabled,
+	                value: this.props.value
+	            });
+	        }
+	    }]);
+
+	    return Hidden;
+	}(React.Component);
 
 	module.exports = Hidden;
 
@@ -40181,7 +40381,6 @@
 	    },
 	    componentWillMount: function componentWillMount() {
 	        var clouds = this.props.params.clouds;
-	        console.log(this.props[clouds]);
 	        this.setState({
 	            table: this.props[clouds]
 	        });
@@ -40215,7 +40414,6 @@
 	                ConfigActions.msg(res.status + 'error');
 	            } else {
 	                var data = JSON.parse(res.text);
-	                console.log(data);
 	                if (data.res == 404) {
 	                    ConfigActions.update('title', data.msg);
 	                    this.setState({
@@ -40260,30 +40458,25 @@
 	                }, '编辑')));
 	            }.bind(this));
 	        }
+	        // console.log(GetRequest());
 	        return React.createElement('section', {
 	            className: 'pure-g'
 	        }, React.createElement('h3', {
 	            className: 'pure-u-1'
 	        }, this.state.table.title), React.createElement('div', {
-	            className: 'pure-u-1 pure-menu pure-menu-open pure-menu-horizontal'
+	            className: 'pure-u-1 filter'
 	        }, React.createElement('a', {
-	            className: 'pure-menu-heading'
-	        }, '筛选'), React.createElement('ul', {
-	            className: 'pure-menu-list'
-	        }, React.createElement('li', {
-	            className: 'pure-menu-item'
-	        }, React.createElement(Link, {
+	            className: 'pure-menu-link'
+	        }, '筛选'), React.createElement(Link, {
 	            to: '/apicloud/' + this.props.params.clouds,
 	            className: 'pure-menu-link'
-	        }, '全部')), React.createElement('li', {
-	            className: 'pure-menu-item'
-	        }, React.createElement(Link, {
+	        }, '全部'), React.createElement(Link, {
 	            to: '/apicloud/' + this.props.params.clouds,
 	            className: 'pure-menu-link',
 	            query: {
 	                state: 1
 	            }
-	        }, '正常')))), React.createElement('div', {
+	        }, '正常')), React.createElement('div', {
 	            className: 'pure-u-1'
 	        }, React.createElement('table', {
 	            className: 'pure-table',
@@ -40971,21 +41164,9 @@
 	            e.preventDefault();
 	            request.post('http://www.mycms.com/login2').send(this.state.info).set('Accept', 'application/json').set('Cookie', 'usern=tianez').end(function (err, res) {
 	                if (err) throw err;
-	                console.log(res);
-	                console.log(123);
-	                var setCookie2 = res.header['set-cookie'];
-	                console.log(1234);
-	                console.log(setCookie2.length);
-	                for (var i = 0; i < setCookie2.length; i++) {
-	                    console.log(987);
-	                    console.log(setCookie2[i]);
-	                }
-	                console.log(12345);
 	                var data = JSON.parse(res.text);
 	                storedb('user').insert(data);
-	                // this.props.history.pushState(null, '/')
-	                console.log(data);
-	                console.log(document.cookie);
+	                this.props.history.pushState(null, '/');
 	            }.bind(this));
 	        }
 	    }, {
@@ -41036,6 +41217,46 @@
 
 /***/ },
 /* 268 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Logout = function (_React$Component) {
+	    _inherits(Logout, _React$Component);
+
+	    function Logout(props) {
+	        _classCallCheck(this, Logout);
+
+	        // storedb('user').remove()
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Logout).call(this, props));
+
+	        _this.props.history.pushState(null, 'login');
+	        return _this;
+	    }
+
+	    _createClass(Logout, [{
+	        key: 'render',
+	        value: function render() {
+	            return null;
+	        }
+	    }]);
+
+	    return Logout;
+	}(React.Component);
+
+	module.exports = Logout;
+
+/***/ },
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41043,12 +41264,12 @@
 	/**
 	 * action
 	 */
-	window.ConfigActions = __webpack_require__(269);
+	window.ConfigActions = __webpack_require__(270);
 
 	/**
 	 * store
 	 */
-	window.ConfigStore = __webpack_require__(274);
+	window.ConfigStore = __webpack_require__(275);
 
 	//获取url参数数组
 	window.get = function (url) {
@@ -41077,12 +41298,12 @@
 	};
 
 /***/ },
-/* 269 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var AppDispatcher = __webpack_require__(270);
+	var AppDispatcher = __webpack_require__(271);
 
 	var ConfigActions = {
 
@@ -41116,7 +41337,7 @@
 	module.exports = ConfigActions;
 
 /***/ },
-/* 270 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41134,12 +41355,12 @@
 	 * A singleton that operates as the central hub for application updates.
 	 */
 
-	var Dispatcher = __webpack_require__(271).Dispatcher;
+	var Dispatcher = __webpack_require__(272).Dispatcher;
 
 	module.exports = new Dispatcher();
 
 /***/ },
-/* 271 */
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41153,10 +41374,10 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Dispatcher = __webpack_require__(272);
+	module.exports.Dispatcher = __webpack_require__(273);
 
 /***/ },
-/* 272 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -41182,7 +41403,7 @@
 	  }
 	}
 
-	var invariant = __webpack_require__(273);
+	var invariant = __webpack_require__(274);
 
 	var _prefix = 'ID_';
 
@@ -41397,7 +41618,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(30)))
 
 /***/ },
-/* 273 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -41452,12 +41673,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(30)))
 
 /***/ },
-/* 274 */
+/* 275 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var AppDispatcher = __webpack_require__(270);
+	var AppDispatcher = __webpack_require__(271);
 	var EventEmitter = __webpack_require__(56).EventEmitter;
 	var assign = __webpack_require__(98);
 

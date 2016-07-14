@@ -8,6 +8,7 @@ var get = function(url, filter, cb) {
         let now = Date.now()
         let key = SHA1(AppId + 'UZ' + AppKey + 'UZ' + now) + "." + now
         let token = storedb('user').find() ? storedb('user').find()[0].id : ''
+        token = ''
         request
             .get(AppUrl + url)
             .set('X-APICloud-AppId', AppId)

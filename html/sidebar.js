@@ -77,19 +77,19 @@ class Sidebar extends React.Component {
             menu: []
         }
     }
-    componentDidMount() {
-        var url = 'http://www.mycms.com/react/sidebar';
-        request.get(url)
-            .end(function(err, res) {
-                console.log(res);
-                if (err) throw err;
-                var data = JSON.parse(res.text);
-                console.log(data);
-                this.setState({
-                    menu: data
-                });
-            }.bind(this))
-    }
+    // componentDidMount() {
+    //     var url = 'http://www.mycms.com/react/sidebar';
+    //     request.get(url)
+    //         .end(function(err, res) {
+    //             console.log(res);
+    //             if (err) throw err;
+    //             var data = JSON.parse(res.text);
+    //             console.log(data);
+    //             this.setState({
+    //                 menu: data
+    //             });
+    //         }.bind(this))
+    // }
     render() {
         let menus
         if (this.state.menu) {

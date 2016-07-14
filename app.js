@@ -45,15 +45,30 @@ const {
     ApiCloud,
     Pages,
     Page,
-    Login
+    Login,
+    Logout
 } = require('./html')
 
 require('./html/global')
 
+function GetRequest() {
+    var url = location.search; //获取url中"?"符后的字串
+    var theRequest = new Object();
+    if (url.indexOf("?") != -1) {
+        var str = url.substr(1);
+        strs = str.split("&");
+        for (var i = 0; i < strs.length; i++) {
+            theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+        }
+    }
+    return theRequest;
+}
+window.GetRequest = GetRequest()
+
 function onEnter(nextState, replace) {
     let pathname = nextState.location.pathname
     let user = storedb('user').find() ? true : false
-    console.log(storedb('user').find())
+    console.log(storedb('user').find());
     if (!user && pathname !== 'login' && pathname !== '/login') {
         ConfigActions.update('msg', '你还没有登录，请先登录！')
         replace({
@@ -73,28 +88,29 @@ const routers = (
         },
         React.createElement(Route, {
                 path: "/",
-                component: Layout,
-                onEnter: onEnter
+                component: Layout
             },
             React.createElement(IndexRoute, {
-                component: Home
+                component: Home,
+                onEnter: onEnter
             }),
             React.createElement(Route, {
                 path: "drag",
                 component: Drag
             }),
             React.createElement(Route, {
-                    path: "apicloud",
-                    // onEnter: onEnter
+                    path: "apicloud"
                 },
                 React.createElement(IndexRoute, {
-                    component: ApiCloudsIndex
+                    component: ApiCloudsIndex,
+                    onEnter: onEnter
                 }),
                 React.createElement(Route, {
                         path: ":clouds"
                     },
                     React.createElement(IndexRoute, {
-                        component: ApiClouds
+                        component: ApiClouds,
+                        onEnter: onEnter
                     }),
                     React.createElement(Route, {
                         path: ":articleId",
@@ -104,7 +120,6 @@ const routers = (
             ),
             React.createElement(Route, {
                     path: "api",
-                    // onEnter: onEnter
                 },
                 React.createElement(IndexRoute, {
                     component: ApiCloudsIndex
@@ -129,7 +144,12 @@ const routers = (
         ),
         React.createElement(Route, {
             path: "login",
-            component: Login
+            component: Login,
+            onEnter: onEnter
+        }),
+        React.createElement(Route, {
+            path: "logout",
+            component: Logout
         }),
         React.createElement(Route, {
             path: "*",
