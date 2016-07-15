@@ -38,9 +38,9 @@ gulp.task('min-js', function() {
 
 gulp.task('less', function() {
     gulp.src('less/style.less')
-        .pipe(sourcemaps.init())
+        // .pipe(sourcemaps.init())
         .pipe(less())
-        .pipe(sourcemaps.write())
+        // .pipe(sourcemaps.write())
         .pipe(rename('style.map.css'))
         .pipe(gulp.dest('dist/'))
         .pipe(cssmin({

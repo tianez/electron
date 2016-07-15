@@ -1,5 +1,5 @@
 'use strict'
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup
+// var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup
 const Apicloud = require('../components/utils/Apicloud')
 const Header = require('./header')
 const Sidebar = require('./sidebar')
