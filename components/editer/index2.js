@@ -64,7 +64,8 @@ class BasicHtmlEditor extends React.Component {
         this.onChange = (editorState) => {
             let previousContent = this.state.editorState.getCurrentContent();
             this.setState({
-                editorState: editorState
+                editorState: editorState,
+                drop: false
             });
             if (previousContent !== editorState.getCurrentContent()) {
                 this.emitHTML(editorState);
@@ -78,6 +79,7 @@ class BasicHtmlEditor extends React.Component {
             this.props.onChange(html);
         }
     }
+
     _handleKeyCommand(command) {
         const {
             editorState
@@ -123,7 +125,22 @@ class BasicHtmlEditor extends React.Component {
             return false;
         }
     }
-
+    onDragStart(e) {
+        console.log(1);
+        console.log(e);
+    }
+    onDragEnter(e) {
+        console.log(1);
+        this.setState({
+            drop: true
+        })
+    }
+    onDragLeave(e) {
+        console.log(2);
+        this.setState({
+            drop: false
+        })
+    }
     _onDrop(e) {
         e.preventDefault()
         let files = e.dataTransfer.files
@@ -236,10 +253,17 @@ class BasicHtmlEditor extends React.Component {
                 className += ' RichEditor-hidePlaceholder';
             }
         }
+        let isdrop = this.state.drop ? ' isdrop' : ''
         return (
             React.createElement('div', {
                     className: 'RichEditor-root draftjs-bhe',
+                    onDragEnter: this.onDragEnter.bind(this)
                 },
+                React.createElement('div', {
+                    className: 'drop' + isdrop,
+                    onDragLeave: this.onDragLeave.bind(this),
+                    onDrop: this._onDrop.bind(this)
+                }),
                 React.createElement(BlockStyleControls, {
                     editorState: editorState,
                     onToggle: this.onChange
@@ -257,8 +281,7 @@ class BasicHtmlEditor extends React.Component {
                     onToggle: this.onChange
                 }),
                 React.createElement('div', {
-                        className: className,
-                        onDrop: this._onDrop.bind(this)
+                        className: className
                     },
                     React.createElement(Editor, {
                         blockStyleFn: getBlockStyle,
