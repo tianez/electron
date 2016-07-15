@@ -3,7 +3,7 @@
 const classNames = require('classNames')
 const FormGroup = require('./FormGroup')
 
-var Checkbox = React.createClass({
+const Checkbox = React.createClass({
     getDefaultProps: function() {
         return {
             title: '多选框',

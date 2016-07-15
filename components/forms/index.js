@@ -10,6 +10,7 @@ const Checkbox = require('./Checkbox')
 const Range = require('./Range')
 const Button = require('./Button')
 const Hidden = require('./Hidden')
+const ColorPicker = require('./ColorPicker')
 const {
     Calendar,
     DateRange
@@ -28,6 +29,7 @@ var Forms = {
     Button: Button,
     Hidden: Hidden,
     Calendar: Calendar,
-    DateRange: DateRange
+    DateRange: DateRange,
+    ColorPicker: ColorPicker,
 }
 module.exports = Forms

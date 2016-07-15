@@ -30,6 +30,7 @@ const {
     Router,
     Route,
     IndexRoute,
+    IndexRedirect,
     Redirect,
     hashHistory,
     browserHistory
@@ -90,6 +91,9 @@ const routers = (
                 path: "/",
                 component: Layout
             },
+            // React.createElement(IndexRedirect, {
+            //     to: 'apicloud/article'
+            // }),
             React.createElement(IndexRoute, {
                 component: Home,
                 onEnter: onEnter

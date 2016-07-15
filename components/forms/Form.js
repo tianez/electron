@@ -17,6 +17,7 @@ var Form = React.createClass({
         if (this.props.apiSubmit) {
             Apicloud.post(this.props.action, this.props.info, function(err, res) {
                 let data = JSON.parse(res.text)
+                console.log(res);
                 if (data.error) {
                     ConfigActions.update('msg', data.error.message)
                 } else {

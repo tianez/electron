@@ -20,7 +20,7 @@ class Login extends React.Component {
         super(props)
         this.state = {
             info: {
-                user_name: 'tianez',
+                username: 'tianez',
                 password: '123456'
             }
         }
@@ -33,18 +33,22 @@ class Login extends React.Component {
         })
     }
     _onSubmit(e) {
-        e.preventDefault();
-        request
-            .post('http://www.mycms.com/login2')
-            .send(this.state.info)
-            .set('Accept', 'application/json')
-            .set('Cookie', 'usern=tianez')
-            .end(function(err, res) {
-                if (err) throw err
-                let data = JSON.parse(res.text)
-                storedb('user').insert(data)
-                this.props.history.pushState(null, '/')
-            }.bind(this))
+        // e.preventDefault();
+        // request
+        //     .post('http://www.mycms.com/login2')
+        //     .send(this.state.info)
+        //     .set('Accept', 'application/json')
+        //     .set('Cookie', 'usern=tianez')
+        //     .end(function(err, res) {
+        //         if (err) throw err
+        //         console.log(res);
+        //         let data = JSON.parse(res.text)
+        //         console.log(res);
+        //         storedb('user').insert(data)
+        //         this.props.history.pushState(null, '/')
+        //     }.bind(this))
+        storedb('user').insert(e)
+        this.props.history.pushState(null, '/')
     }
     render() {
         return (
@@ -67,18 +71,18 @@ class Login extends React.Component {
                         }, 'login')
                     ),
                     React.createElement(Form, {
-                            action: 'http://www.mycms.com/login2',
+                            action: 'user/login',
                             info: this.state.info,
-                            apiSubmit: false,
+                            // apiSubmit: false,
                             legend: '用户登录',
                             onSubmit: this._onSubmit.bind(this)
                         },
                         React.createElement(Input, {
                             type: 'text',
                             title: '用户名',
-                            name: 'user_name',
+                            name: 'username',
                             placeholder: 'username',
-                            value: this.state.info.user_name,
+                            value: this.state.info.username,
                             onChange: this._onChange.bind(this)
                         }),
                         React.createElement(Input, {

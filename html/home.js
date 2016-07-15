@@ -12,6 +12,7 @@ let html = `
  <img src="http://www.itianyugroup.com/uploadfile/2016/0629/20160629120921895.jpg" />
 `;
 
+var ColorPicker = require('rc-color-picker');
 var Home = React.createClass({
     getInitialState: function() {
         return {
@@ -36,6 +37,7 @@ var Home = React.createClass({
                 React.createElement('div', {
                         className: 'pure-u-1'
                     },
+
                     React.createElement(Editer, {
                         value: html,
                         onChange: this.updateHtml
@@ -44,7 +46,8 @@ var Home = React.createClass({
                         dangerouslySetInnerHTML: {
                             __html: this.state.html
                         }
-                    })
+                    }),
+                    React.createElement(ColorPicker)
 
                     // React.createElement(Calendar, {
                     //     date: now => { //默认时间
