@@ -4,7 +4,7 @@ const classNames = require('classNames')
 
 var FormGroup = React.createClass({
     render: function() {
-        let classname = this.props.class ? 'form-group ' + this.props.class : 'form-group'
+        let classname = this.props.className ? 'form-group ' + this.props.className : 'form-group'
         return (
             React.createElement('div', {
                     className: classname

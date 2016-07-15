@@ -1,7 +1,9 @@
 'use strict'
 
 const {
-    Calendar
+    Calendar,
+    ColorPicker,
+    Select
 } = require('../components/forms/index')
 
 const Editer = require('../components/editer')
@@ -12,7 +14,6 @@ let html = `
  <img src="http://www.itianyugroup.com/uploadfile/2016/0629/20160629120921895.jpg" />
 `;
 
-var ColorPicker = require('rc-color-picker');
 var Home = React.createClass({
     getInitialState: function() {
         return {
@@ -47,8 +48,9 @@ var Home = React.createClass({
                             __html: this.state.html
                         }
                     }),
-                    React.createElement(ColorPicker)
-
+                    React.createElement(ColorPicker),
+                    React.createElement(Select)
+                
                     // React.createElement(Calendar, {
                     //     date: now => { //默认时间
                     //         // return now.add(-4, 'days')

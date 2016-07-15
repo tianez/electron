@@ -1,0 +1,27 @@
+.form-select {
+    .form-choose {
+        border: 0.1rem solid #ccc;
+        border-top: none;
+        position: absolute;
+        width: 100%;
+        top: 3.2rem;
+        left: 0;
+    }
+    .form-select-search {
+        width: 100%;
+        padding: 1.5rem;
+        border-bottom: 1px solid #eee;
+    }
+    .form-select-choose {
+        max-height: 20rem;
+        overflow-y: auto;
+        .form-option {
+            padding: 0 1.2rem;
+            &.active,
+            &:hover {
+                background: #3366CC;
+                color: #fff;
+            }
+        }
+    }
+}
