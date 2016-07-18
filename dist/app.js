@@ -2322,6 +2322,7 @@
 	var Calendar = _require.Calendar;
 	var ColorPicker = _require.ColorPicker;
 	var Select = _require.Select;
+	var Button = _require.Button;
 
 
 	var Editer = __webpack_require__(427);
@@ -2358,7 +2359,7 @@
 	            dangerouslySetInnerHTML: {
 	                __html: this.state.html
 	            }
-	        }), React.createElement(ColorPicker), React.createElement(Select)
+	        }), React.createElement(ColorPicker), React.createElement(Select), React.createElement(Button)
 
 	        // React.createElement(Calendar, {
 	        //     date: now => { //默认时间
@@ -13477,22 +13478,55 @@
 	    function Botton() {
 	        _classCallCheck(this, Botton);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Botton).call(this));
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Botton).call(this));
+
+	        _this.state = {
+	            dotstyle: {
+	                top: 0,
+	                left: 0
+	            },
+	            dot: false
+	        };
+	        return _this;
 	    }
 
 	    _createClass(Botton, [{
+	        key: 'onClick',
+	        value: function onClick(e) {
+	            var top = e.clientY - e.target.getBoundingClientRect().top;
+	            var left = e.clientX - e.target.getBoundingClientRect().left;
+	            this.setState({
+	                dotstyle: {
+	                    top: top + 'px',
+	                    left: left + 'px'
+	                },
+	                dot: true
+	            });
+	            setTimeout(function () {
+	                this.setState({
+	                    dot: false
+	                });
+	            }.bind(this), 3000);
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return React.createElement('div', {
 	                className: 'form-group'
 	            }, React.createElement('div', {
 	                className: 'form-control'
+	            }, React.createElement('div', {
+	                className: 'form-button-dot',
+	                onClick: this.onClick.bind(this)
 	            }, React.createElement('input', {
-	                className: 'pure-button pure-button-primary',
+	                className: 'pure-button pure-button-primary form-button',
 	                type: 'submit',
 	                disabled: this.props.disabled,
 	                value: this.props.value
-	            })));
+	            }), this.state.dot ? React.createElement('div', {
+	                className: 'pure-dot',
+	                style: this.state.dotstyle
+	            }) : '')));
 	        }
 	    }]);
 

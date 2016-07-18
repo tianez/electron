@@ -36,32 +36,11 @@ class Botton extends React.Component {
                         className: 'form-control'
                     },
                     React.createElement('div', {
-                            className: 'content'
-                        },
-                        React.createElement('button', {
-                                className: 'button styl-material',
-                                id: 'js-ripple-btn'
-                            },
-                            React.createElement('svg', {
-                                    className: 'ripple-obj',
-                                    id: 'js-ripple'
-                                },
-                                React.createElement('use', {
-                                    height: '100px',
-                                    width: '100px',
-                                    'xlink:href': '#ripply-scott',
-                                    className: 'js-ripple'
-                                })
-                            )
-                        )
-                    ),
-                    React.createElement('div', {
-                            className: 'pure-button-dot',
+                            className: 'form-button-dot',
                             onClick: this.onClick.bind(this),
-                            ref: 'theInput'
                         },
                         React.createElement('input', {
-                            className: 'pure-button pure-button-primary',
+                            className: 'pure-button pure-button-primary form-button',
                             type: 'submit',
                             disabled: this.props.disabled,
                             value: this.props.value

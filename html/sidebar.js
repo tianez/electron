@@ -77,19 +77,32 @@ class Sidebar extends React.Component {
             menu: []
         }
     }
-    // componentDidMount() {
-    //     var url = 'http://www.mycms.com/react/sidebar';
-    //     request.get(url)
-    //         .end(function(err, res) {
-    //             console.log(res);
-    //             if (err) throw err;
-    //             var data = JSON.parse(res.text);
-    //             console.log(data);
-    //             this.setState({
-    //                 menu: data
-    //             });
-    //         }.bind(this))
-    // }
+    componentDidMount() {
+        // var url = 'http://www.mycms.com/react/sidebar';
+        // request.get(url)
+        //     .end(function(err, res) {
+        //         console.log(res);
+        //         if (err) throw err;
+        //         var data = JSON.parse(res.text);
+        //         console.log(data);
+        //         this.setState({
+        //             menu: data
+        //         });
+        //     }.bind(this))
+        let filter = {
+            where: {
+                state: 1
+            },
+            order: ['order DESC', 'createdAt DESC'],
+            limit: 20
+        }
+        Apicloud.get('menu', filter, function(err, res) {
+            let menu = JSON.parse(res.text)
+            this.setState({
+                menu2: menu
+            })
+        }.bind(this))
+    }
     render() {
         let menus
         if (this.state.menu) {
@@ -103,6 +116,16 @@ class Sidebar extends React.Component {
                     React.createElement(Children, {
                         data: d,
                     }))
+            })
+        }
+        let menus2
+        if (this.state.menu2) {
+            menus = this.state.menu2.map(function(d, index) {
+                return React.createElement(A, {
+                    key: index,
+                    to: d.link,
+                    title: d.title
+                })
             })
         }
         return (
@@ -121,7 +144,8 @@ class Sidebar extends React.Component {
                         to: 'drag',
                         title: 'drag'
                     }),
-                    menus
+                    menus,
+                    menus2
                 )
             )
         )
