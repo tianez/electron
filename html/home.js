@@ -3,7 +3,8 @@
 const {
     Calendar,
     ColorPicker,
-    Select
+    Select,
+    Button
 } = require('../components/forms/index')
 
 const Editer = require('../components/editer')
@@ -49,8 +50,9 @@ var Home = React.createClass({
                         }
                     }),
                     React.createElement(ColorPicker),
-                    React.createElement(Select)
-                
+                    React.createElement(Select),
+                    React.createElement(Button)
+
                     // React.createElement(Calendar, {
                     //     date: now => { //默认时间
                     //         // return now.add(-4, 'days')

@@ -1,0 +1,28 @@
+.pure-button-dot {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    display: inline-block;
+    cursor: pointer;
+    .pure-dot {
+        height: 2px;
+        width: 2px;
+        border-radius: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        animation: sploosh 3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        background: transparent;
+    }
+}
+@keyframes sploosh {
+    0% {
+        box-shadow: 0 0 0 0 rgba(66, 166, 223, 0.7);
+        background: rgba(66, 166, 223, 0.7);
+    }
+    100% {
+        box-shadow: 0 0 0 120px rgba(66, 166, 223, 0);
+        background: rgba(66, 166, 223, 0);
+    }
+}
