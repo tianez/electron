@@ -4,7 +4,8 @@ const {
     Calendar,
     ColorPicker,
     Select,
-    Button
+    Button,
+    Tab
 } = require('../components/forms/index')
 
 const Editer = require('../components/editer')
@@ -51,7 +52,18 @@ var Home = React.createClass({
                     }),
                     React.createElement(ColorPicker),
                     React.createElement(Select),
-                    React.createElement(Button)
+                    React.createElement(Tab, {},
+                        React.createElement('div', {
+                                title: '1232sds'
+                            },
+                            '8977888'
+                        ),
+                        React.createElement('div', {
+                                title: '1232'
+                            },
+                            '89778882999922'
+                        )
+                    )
 
                     // React.createElement(Calendar, {
                     //     date: now => { //默认时间

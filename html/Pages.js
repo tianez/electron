@@ -165,8 +165,6 @@ const Pages = React.createClass({
                 page: page
             })
             .end(function(err, res) {
-                console.log(err)
-                console.log(res)
                 if (err) {
                     let msg = [res.status + 'error']
                 } else {

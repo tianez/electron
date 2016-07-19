@@ -1,0 +1,48 @@
+.tab {
+    clear: both;
+    .tab-cards {
+        position: relative;
+        .tab-card {
+            display: inline-block;
+            background: #f00;
+            padding: 1rem;
+            cursor: pointer;
+            position: relative;
+        }
+        .active::before {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 0.4rem;
+            background: #000;
+            content: "";
+            .transition();
+        }
+        .active {
+            background: #0f0;
+        }
+        .active::before {
+            width: 100%;
+        }
+        .tab-cardsw {
+            height: 0.2rem;
+            background: #000;
+            width: 2rem;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+        }
+    }
+    .tab-cards2 {
+        .tab-card2 {
+            display: none;
+            background: #f00;
+            margin: 1rem;
+            padding: 1rem;
+        }
+        .active {
+            display: block;
+        }
+    }
+}
