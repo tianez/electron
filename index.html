@@ -10,7 +10,10 @@
     <link href="http://cdn.bootcss.com/draft-js/0.7.0/Draft.min.css" rel="stylesheet">
     <!-- <link rel="stylesheet" href="dist/app.map.css" /> -->
     <link rel="stylesheet" href="bower_components/swiper/css/swiper.css" />
+    <link rel="stylesheet" href="bower_components/simditor/styles/simditor.css" />
+    <link rel="stylesheet" href="bower_components/simditor/styles/simditor.css" />
     <link rel="stylesheet" href="dist/style.min.css" />
+
 </head>
 
 <body>
@@ -21,6 +24,22 @@
     <script src="http://cdn.bootcss.com/react-router/2.4.1/ReactRouter.min.js"></script>
     <script src="http://cdn.bootcss.com/immutable/3.8.1/immutable.min.js"></script>
     <script src="http://cdn.bootcss.com/draft-js/0.7.0/Draft.min.js"></script>
+
+    <script>
+        if (typeof module === 'object') {
+            window.module = module;
+            module = undefined;
+        }
+    </script>
+    <script type="text/javascript" src="bower_components/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="bower_components/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="bower_components/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="bower_components/simditor/scripts/uploader.js"></script>
+    <script type="text/javascript" src="bower_components/simditor/scripts/simditor.js"></script>
+
+    <script>
+        if (window.module) module = window.module;
+    </script>
 
     <script src="components/utils/SHA1.js"></script>
     <script src="components/utils/CryptoJS.js"></script>

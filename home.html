@@ -5,11 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;" />
     <title>Electron</title>
-    <link href="http://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="bower_components/pure/pure.css" />
-    <link href="http://cdn.bootcss.com/draft-js/0.7.0/Draft.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/draft-js/0.7.0/Draft.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="bower_components/swiper/css/swiper.css" />
     <link rel="stylesheet/less" href="less/style.less" />
+    <link rel="stylesheet" href="bower_components/simditor/styles/simditor.css" />
 </head>
 
 <body>
@@ -17,13 +18,27 @@
     <script src="http://cdn.bootcss.com/react/15.1.0/react-with-addons.js"></script>
     <script src="http://cdn.bootcss.com/react/15.1.0/react-dom.min.js"></script>
     <script src="http://cdn.bootcss.com/react-router/2.4.1/ReactRouter.min.js"></script>
-
     <script src="http://cdn.bootcss.com/immutable/3.8.1/immutable.min.js"></script>
     <script src="http://cdn.bootcss.com/es6-shim/0.35.1/es6-sham.min.js"></script>
     <script src="http://cdn.bootcss.com/babel-core/5.8.34/browser.min.js"></script>
     <script src="http://cdn.bootcss.com/draft-js/0.7.0/Draft.js"></script>
-
     <script src="http://cdn.bootcss.com/less.js/2.7.1/less.min.js"></script>
+
+    <script>
+        if (typeof module === 'object') {
+            window.module = module;
+            module = undefined;
+        }
+    </script>
+    <script type="text/javascript" src="bower_components/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="bower_components/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="bower_components/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="bower_components/simditor/scripts/uploader.js"></script>
+    <script type="text/javascript" src="bower_components/simditor/scripts/simditor.js"></script>
+    <script>
+        if (window.module) module = window.module;
+    </script>
+
     <script src="components/utils/SHA1.js"></script>
     <script src="components/utils/CryptoJS.js"></script>
     <script src="bower_components/storedb/storedb.js"></script>

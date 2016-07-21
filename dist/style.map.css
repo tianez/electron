@@ -129,7 +129,7 @@ a {
 }
 .sidebar .pure-menu-heading,
 .sidebar .pure-menu-link {
-  padding: 0 1rem;
+  padding: 0 1rem 0 0;
   position: relative;
   z-index: 9;
   display: -webkit-box;
@@ -149,13 +149,28 @@ a {
   flex-grow: 1;
   padding-left: 0.5rem;
 }
-.sidebar .active::before {
+.sidebar .pure-menu-link::before {
   background: #1CAF9A !important;
-  width: 2rem;
-  height: 100%;
+  margin-right: .5rem;
   display: block;
   position: relative;
-  z-index: 999;
+  width: 0;
+  top: 0;
+  left: 0;
+  z-index: 8;
+  content: "";
+  transition: all 0.1s;
+  -moz-transition: all 0.1s;
+  -webkit-transition: all 0.1s;
+}
+.sidebar .active,
+.sidebar .active .fa,
+.sidebar .active:hover {
+  background: #2C3542 !important;
+  color: #fff;
+}
+.sidebar .active::before {
+  width: 2rem;
 }
 .sidebar .pure-menu-sub {
   padding-top: 0.1rem;
@@ -862,6 +877,54 @@ a {
 .form-select .form-select-choose .form-option:hover {
   background: #3366CC;
   color: #fff;
+}
+.tab {
+  clear: both;
+}
+.tab .tab-cards {
+  position: relative;
+}
+.tab .tab-cards .tab-card {
+  display: inline-block;
+  background: #f00;
+  padding: 1rem;
+  cursor: pointer;
+  position: relative;
+}
+.tab .tab-cards .active::before {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0.4rem;
+  background: #000;
+  content: "";
+  transition: all 0.6s;
+  -moz-transition: all 0.6s;
+  -webkit-transition: all 0.6s;
+}
+.tab .tab-cards .active {
+  background: #0f0;
+}
+.tab .tab-cards .active::before {
+  width: 100%;
+}
+.tab .tab-cards .tab-cardsw {
+  height: 0.2rem;
+  background: #000;
+  width: 2rem;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+.tab .tab-cards2 .tab-card2 {
+  display: none;
+  background: #f00;
+  margin: 1rem;
+  padding: 1rem;
+}
+.tab .tab-cards2 .active {
+  display: block;
 }
 div.button,
 div.button span,

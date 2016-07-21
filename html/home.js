@@ -22,6 +22,12 @@ var Home = React.createClass({
             items: ['hello', 'world', 'click', 'me']
         };
     },
+    componentDidMount: function(){
+        var editor = new Simditor({
+          textarea: $('#editor')
+          //optional options
+        });
+    },
     handleSelect: function(data) {
         console.log(data); // Momentjs object
         console.log(data.format('YYYY-MM-D HH d')); // Momentjs object
@@ -63,6 +69,11 @@ var Home = React.createClass({
                             },
                             '89778882999922'
                         )
+                    ),
+                    React.createElement('textarea', {
+                            id: 'editor',
+                            placeholder:'placeholder'
+                        }
                     )
 
                     // React.createElement(Calendar, {

@@ -295,7 +295,8 @@
 }
 .simditor .simditor-toolbar > ul > li > .toolbar-item span.simditor-icon {
   display: inline;
-  line-height: normal;
+  line-height: 40px;
+  /*line-height: normal;*/
 }
 .simditor .simditor-toolbar > ul > li > .toolbar-item:hover span {
   opacity: 1;
