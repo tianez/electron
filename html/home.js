@@ -22,10 +22,19 @@ var Home = React.createClass({
             items: ['hello', 'world', 'click', 'me']
         };
     },
-    componentDidMount: function(){
+    componentDidMount: function() {
         var editor = new Simditor({
-          textarea: $('#editor')
-          //optional options
+            textarea: $('#editor'),
+            // pasteImage: true,
+            upload: {
+                url: '/upload'
+            },
+            //   markdown: true,
+            toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color',
+                    '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|',
+                    'markdown', 'fullscreen', 'html','test'
+                ]
+                //optional options
         });
     },
     handleSelect: function(data) {
@@ -71,10 +80,9 @@ var Home = React.createClass({
                         )
                     ),
                     React.createElement('textarea', {
-                            id: 'editor',
-                            placeholder:'placeholder'
-                        }
-                    )
+                        id: 'editor',
+                        placeholder: 'placeholder'
+                    })
 
                     // React.createElement(Calendar, {
                     //     date: now => { //默认时间

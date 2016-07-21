@@ -21,6 +21,8 @@
     "normalize-css": "~4.0.0",
     "jquery.uniform": "^2.2.0",
     "pure": "^0.6.0",
-    "storedb": "^0.1.2"
+    "storedb": "^0.1.2",
+    "simditor-fullscreen": "^0.0.2",
+    "js-beautify": "^1.6.3"
   }
 }
