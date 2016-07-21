@@ -145,6 +145,7 @@
 
 .simditor {
   position: relative;
+  z-index: 99999;
   border: 1px solid #c9d8db;
 }
 .simditor .simditor-wrapper {
@@ -292,10 +293,10 @@
 }
 .simditor .simditor-toolbar > ul > li > .toolbar-item span {
   opacity: 0.6;
+  line-height: 40px;
 }
 .simditor .simditor-toolbar > ul > li > .toolbar-item span.simditor-icon {
   display: inline;
-  line-height: 40px;
   /*line-height: normal;*/
 }
 .simditor .simditor-toolbar > ul > li > .toolbar-item:hover span {

@@ -1,0 +1,39 @@
+{
+  "name": "simditor-fullscreen",
+  "version": "0.0.2",
+  "homepage": "https://github.com/huyinghuan/simditor-fullscreen",
+  "authors": [
+    "huyinghuan <ec.huyinghuan@gmail.com>"
+  ],
+  "description": "a fullscreen plugin for Simditor",
+  "main": "lib/js",
+  "keywords": [
+    "simditor",
+    "fullscreen"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.0",
+    "simditor": "~2.1.5"
+  },
+  "devDependencies": {
+    "requirejs": "~2.1.15"
+  },
+  "_release": "0.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.2",
+    "commit": "c86d46b34e5a6c73b79221ce823e0f04bc342e56"
+  },
+  "_source": "https://github.com/huyinghuan/simditor-fullscreen.git",
+  "_target": "^0.0.2",
+  "_originalSource": "simditor-fullscreen",
+  "_direct": true
+}
