@@ -51,6 +51,7 @@ const {
 } = require('./html')
 
 require('./html/global')
+require('./html/IndexedDB')
 
 function GetRequest() {
     var url = location.search; //获取url中"?"符后的字串
@@ -69,7 +70,7 @@ window.GetRequest = GetRequest()
 function onEnter(nextState, replace) {
     let pathname = nextState.location.pathname
     let user = storedb('user').find() ? true : false
-    console.log(storedb('user').find());
+    // console.log(storedb('user').find());
     if (!user && pathname !== 'login' && pathname !== '/login') {
         ConfigActions.update('msg', '你还没有登录，请先登录！')
         replace({
