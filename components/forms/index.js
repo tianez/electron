@@ -13,6 +13,7 @@ const Hidden = require('./Hidden')
 const ColorPicker = require('./ColorPicker')
 const Select = require('./Select')
 const Tab = require('./Tab')
+const Audio = require('./Audio')
 const {
     Calendar,
     DateRange
@@ -34,6 +35,7 @@ var Forms = {
     DateRange: DateRange,
     ColorPicker: ColorPicker,
     Select: Select,
-    Tab: Tab
+    Tab: Tab,
+    Audio: Audio
 }
 module.exports = Forms
