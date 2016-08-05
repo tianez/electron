@@ -36,12 +36,36 @@ class Header extends React.Component {
             order: ['order DESC', 'createdAt DESC'],
             limit: 20
         }
-        Apicloud.get('menu', filter, function(err, res) {
-            let menu = JSON.parse(res.text)
-            this.setState({
-                menu: menu
+        let that = this
+        new Promise(function(resolve, reject) {
+            Apicloud.get('menu', filter, function(err, res) {
+                if (err) {
+                    reject('error');
+                } else {
+                    let menu = JSON.parse(res.text)
+                    resolve(menu);
+                    that.setState({
+                        menu: menu
+                    })
+                }
             })
-        }.bind(this))
+        }).then(function(r) {
+            console.log('Done: ' + r);
+            return new Promise(function(resolve, reject) {
+                console.log('calculating');
+                resolve('2000 OK');
+            });
+        }).then(function(r) {
+            console.log('Done: ' + r);
+        }).catch(function(reason) {
+            console.log('Failed: ' + reason);
+        });
+        // Apicloud.get('menu', filter, function(err, res) {
+        //     let menu = JSON.parse(res.text)
+        //     this.setState({
+        //         menu: menu
+        //     })
+        // }.bind(this))
     }
     render() {
         let menus
