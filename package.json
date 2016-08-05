@@ -7,6 +7,7 @@
     "draft-js": "^0.5.0",
     "flux": "^2.1.1",
     "lodash": "^4.13.1",
+    "object-assign": "^4.1.0",
     "rc-color-picker": "^1.0.1",
     "react": "^15.1.0",
     "react-date-range": "^0.2.4",
