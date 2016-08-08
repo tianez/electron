@@ -22,22 +22,7 @@ if (window.indexedDB) {
                         unique: false
                     }
                 }]
-        }, {
-                table: 'mytable2',
-                dbindex: [{
-                    key: 'name',
-                    name: 'name',
-                    format: {
-                        unique: false
-                    }
-                }, {
-                        key: 'email',
-                        name: 'email',
-                        format: {
-                            unique: false
-                        }
-                    }]
-            }]
+        }]
     }
     openDB(myDB)
 } else {
@@ -49,6 +34,24 @@ function openDB(myDB) {
     //打开数据库，如果没有，则创建
     var openRequest = window.indexedDB.open(myDB.name, version);
     new Promise(function (resolve, reject) {
+        //DB版本设置或升级时回调
+        openRequest.onupgradeneeded = function (e) {
+            console.log('DB version changed to ' + version);
+            var thisDB = e.target.result;
+            if (!thisDB.objectStoreNames.contains(myDB.name)) {
+                console.log("Create Object Store: " + myDB.name);
+                // 创建存储对象(类似于关系数据库的表)， 还创建索引
+                myDB.tables.map(function (d, index) {
+                    let objectStore = thisDB.createObjectStore(d.table, {
+                        autoIncrement: true
+                    });
+                    d.dbindex.map(function (t, i) {
+                        objectStore.createIndex(t.key, t.name, t.format);
+                    })
+                })
+                resolve('Create Object Store Success!');
+            }
+        }
         //DB成功打开回调
         openRequest.onsuccess = function (e) {
             console.log("Success!");
@@ -71,25 +74,6 @@ function openDB(myDB) {
     }).catch(function (reason) {
         console.log('Failed: ' + reason);
     });
-
-    //DB版本设置或升级时回调
-    openRequest.onupgradeneeded = function (e) {
-        console.log('DB version changed to ' + version);
-        var thisDB = e.target.result;
-        if (!thisDB.objectStoreNames.contains(myDB.name)) {
-            console.log("Create Object Store: " + myDB.name);
-            // 创建存储对象(类似于关系数据库的表)， 还创建索引
-            myDB.tables.map(function (d, index) {
-                let objectStore = thisDB.createObjectStore(d.table, {
-                    autoIncrement: true
-                });
-                d.dbindex.map(function (t, i) {
-                    objectStore.createIndex(t.key, t.name, t.format);
-                })
-            })
-        }
-        return true
-    }
 }
 
 //添加一条记录

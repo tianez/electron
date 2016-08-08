@@ -63,12 +63,12 @@ class Login extends React.Component {
                         },
                         React.createElement(Link, {
                             to: '/',
-                            title: 'drag'
-                        }, 'drag'),
+                            title: '首页'
+                        }, '首页'),
                         React.createElement(Link, {
                             to: 'login',
-                            title: 'login'
-                        }, 'login')
+                            title: '登录'
+                        }, '登录')
                     ),
                     React.createElement(Form, {
                             action: 'user/login',
