@@ -51,7 +51,7 @@ const {
 } = require('./html')
 
 require('./html/global')
-// require('./html/IndexedDB')
+require('./html/IndexedDB')
 
 function GetRequest() {
     var url = location.search; //获取url中"?"符后的字串

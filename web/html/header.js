@@ -50,9 +50,9 @@ class Header extends React.Component {
                 }
             })
         }).then(function(r) {
-            console.log('Done: ' + r);
+            // console.log('Done: ' + r);
             return new Promise(function(resolve, reject) {
-                console.log('calculating');
+                // console.log('calculating');
                 resolve('2000 OK');
             });
         }).then(function(r) {
