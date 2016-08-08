@@ -2,17 +2,19 @@
   "name": "electron",
   "productName": "Electron",
   "main": "app.js",
+  "license": "ISC",
   "dependencies": {
     "classnames": "^2.2.5",
     "draft-js": "^0.5.0",
     "flux": "^2.1.1",
-    "lodash": "^4.13.1",
+    "lodash": "^4.14.1",
     "object-assign": "^4.1.0",
-    "rc-color-picker": "^1.0.1",
-    "react": "^15.1.0",
+    "rc-color-picker": "^1.1.0",
+    "react": "^15.3.0",
     "react-date-range": "^0.2.4",
-    "react-dom": "^15.1.0",
-    "react-router": "^2.4.1"
+    "react-dom": "^15.3.0",
+    "react-router": "^2.6.1",
+    "superagent": "^2.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.9.1",

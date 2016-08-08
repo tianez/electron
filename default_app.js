@@ -28,7 +28,7 @@ app.on('ready', function() {
         title: "王的理想乡",
         autoHideMenuBar: true
     })
-    mainWindow.loadURL('file://' +__dirname + '/../web/trunk/home.html');
+    mainWindow.loadURL('file://' +__dirname + '/web/home.html');
     // mainWindow.loadURL('http://localhost:8888/');
     // mainWindow.webContents.openDevTools(); //打开开发者工具
     // mainWindow.setFullScreen(!mainWindow.isFullScreen());
