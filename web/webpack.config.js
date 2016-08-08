@@ -21,21 +21,21 @@ module.exports = {
                 presets: ['es2015', 'react']
             }
         }, { //css
-            test: /\.css$/, // Only .css files
-            loader: ExtractTextPlugin.extract("style-loader", "css-loader")
+                test: /\.css$/, // Only .css files
+                loader: ExtractTextPlugin.extract("style-loader", "css-loader")
                 // loader: 'style!css' // Run both loaders
-        }, { // LESS
-            test: /\.less$/,
-            loader: ExtractTextPlugin.extract("style", "css!less")
-        }, { // SASS
-            test: /\.scss$/,
-            loader: 'style!css!sass'
-        }, { //图片
-            test: /\.(png|jpg)$/,
-            // loader: 'url?limit=25000',
-            loader: 'url?limit=50&name=images/[name].[ext]',
+            }, { // LESS
+                test: /\.less$/,
+                loader: ExtractTextPlugin.extract("style", "css!less")
+            }, { // SASS
+                test: /\.scss$/,
+                loader: 'style!css!sass'
+            }, { //图片
+                test: /\.(png|jpg)$/,
+                // loader: 'url?limit=25000',
+                loader: 'url?limit=50&name=images/[name].[ext]',
 
-        }]
+            }]
     },
     plugins: [
         // new webpack.optimize.CommonsChunkPlugin('vendors', 'build/vendors.js'),
