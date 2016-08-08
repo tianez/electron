@@ -154,15 +154,3 @@ function closeDB(DB) {
 function deleteDB(name) {
     indexedDB.deleteDatabase(name);
 }
-
-var websqlDB = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
-var msg;
-websqlDB.transaction(function (tx) {
-    tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (id unique, log)');
-    tx.executeSql('INSERT INTO LOGS (id, log) VALUES (1, "foobar")');
-    tx.executeSql('INSERT INTO LOGS (id, log) VALUES (2, "logmsg")');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS2 (id unique, log)');
-    tx.executeSql('INSERT INTO LOGS2 (id, log) VALUES (2, "logmsg")');
-    msg = 'Log message created and row inserted.';
-    console.log(msg);
-});
