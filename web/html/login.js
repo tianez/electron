@@ -53,14 +53,14 @@ class Login extends React.Component {
     render() {
         return (
             React.createElement('section', {
-                    className: 'pure-g'
-                },
+                className: 'pure-g'
+            },
                 React.createElement('section', {
-                        className: 'pure-u-1 login'
-                    },
+                    className: 'pure-u-1 login'
+                },
                     React.createElement('section', {
-                            className: 'login_t pure-u-1'
-                        },
+                        className: 'login_t pure-u-1'
+                    },
                         React.createElement(Link, {
                             to: '/',
                             title: '首页'
@@ -71,12 +71,12 @@ class Login extends React.Component {
                         }, '登录')
                     ),
                     React.createElement(Form, {
-                            action: 'user/login',
-                            info: this.state.info,
-                            // apiSubmit: false,
-                            legend: '用户登录',
-                            onSubmit: this._onSubmit.bind(this)
-                        },
+                        action: 'user/login',
+                        info: this.state.info,
+                        // apiSubmit: false,
+                        legend: '用户登录',
+                        onSubmit: this._onSubmit.bind(this)
+                    },
                         React.createElement(Input, {
                             type: 'text',
                             title: '用户名',
