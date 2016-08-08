@@ -3,7 +3,7 @@ var runSequence = require('run-sequence')
 var connect = require('gulp-connect') //构建本地web服务器
 var less = require('gulp-less') //less编译
 var sourcemaps = require('gulp-sourcemaps')
-var cssmin = require('gulp-minify-css') //css压缩
+var cssmin = require('gulp-clean-css') //css压缩
 var uglify = require('gulp-uglify') //js压缩
 var concat = require('gulp-concat') //文件合并
 
