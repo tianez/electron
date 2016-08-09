@@ -48,7 +48,7 @@ function openDB(myDB) {
                     });
                     d.dbindex.map(function (t, i) {
                         objectStore.createIndex(t.key, t.name, t.format);
-                    })
+                    });
                 })
             }
         }

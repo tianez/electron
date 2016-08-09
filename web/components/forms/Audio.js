@@ -30,7 +30,7 @@ class Audio extends React.Component {
                         src: '1.mp3',
                         controls: 'controls',
                         loop: 'loop',
-                        autoPlay: 'autoplay'
+                        autoPlay: false
                     }, '亲 您的浏览器不支持html5的audio标签')
                 )
             )
