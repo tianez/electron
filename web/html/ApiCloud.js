@@ -13,27 +13,27 @@ const {
     Hidden
 } = require('../components/forms/index')
 var ApiCloud = React.createClass({
-    getDefaultProps: function() {
+    getDefaultProps: function () {
         return {
             article: '文章',
             menu: '菜单',
             model: '字段'
         }
     },
-    getInitialState: function() {
+    getInitialState: function () {
         return {
             info: null
         }
     },
-    componentDidMount: function() {
+    componentDidMount: function () {
         this._req(this.props)
     },
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps: function (nextProps) {
         if (nextProps.location.pathname !== this.state.hash) {
             this._req(nextProps)
         }
     },
-    _req: function(props) {
+    _req: function (props) {
         let action = props.params.clouds
         let title = this.props[action] ? this.props[action] : '田恩仲开发设计'
         let {
@@ -54,14 +54,13 @@ var ApiCloud = React.createClass({
             order: ['order DESC', 'createdAt DESC'],
             limit: $_GET['limit'] ? parseInt($_GET['limit']) : 100
         }
-        Apicloud.get('model', filter, function(err, res) {
+        Apicloud.get('model', filter, function (err, res) {
             let model = JSON.parse(res.text)
             if (articleId !== 'add') {
                 action = action + '/' + articleId
-                console.log(action);
-                let article = ConfigStore.get(articleId)
-                console.log(article);
-                if (article) {
+                let article = storedb('article').find({ 'id': articleId })
+                if (article && article.length !== 0) {
+                    article = article[0]['value']
                     article._method = 'PUT'
                     ConfigActions.update('title', article.title + '-编辑' + title)
                     this.setState({
@@ -73,9 +72,9 @@ var ApiCloud = React.createClass({
                         id: articleId
                     })
                 } else {
-                    Apicloud.get(props.params.clouds + '/' + articleId, '', function(err, res) {
-                        let article = JSON.parse(res.text)
-                        console.log(article);
+                    Apicloud.get(props.params.clouds + '/' + articleId, '', function (err, res) {
+                        article = JSON.parse(res.text)
+                        storedb('article').insert({ 'id': articleId, 'value': article })
                         article._method = 'PUT'
                         ConfigActions.update('title', article.title + '-编辑' + title)
                         this.setState({
@@ -84,7 +83,7 @@ var ApiCloud = React.createClass({
                             title: '编辑' + title,
                             info: article,
                             action: action,
-                            id: articleId,
+                            id: articleId
                         })
                     }.bind(this))
                 }
@@ -104,14 +103,14 @@ var ApiCloud = React.createClass({
             }
         }.bind(this))
     },
-    _onChange: function(name, value) {
+    _onChange: function (name, value) {
         let info = this.state.info
         info[name] = value
         this.setState({
             info: info
         })
     },
-    _onSubmit: function(data) {
+    _onSubmit: function (data) {
         ConfigActions.update('title', data.title)
         ConfigActions.update(data.id, data)
         if (!this.state.id) {
@@ -121,15 +120,19 @@ var ApiCloud = React.createClass({
             ConfigActions.update('msg', '保存成功！')
         }
     },
-    render: function() {
+    render: function () {
         let render
         let forms
         let info = this.state.info
         let model = this.state.model
         if (model) {
             let onChange = this._onChange
-            forms = model.map(function(d, index) {
-                d.value = info[d.name] || d.default || ''
+            forms = model.map(function (d, index) {
+                if (info[d.name] || info[d.name] == 0) {
+                    d.value = info[d.name]
+                } else {
+                    d.value = d.default || ''
+                }
                 d.key = d.name
                 d.onChange = onChange
                 switch (d.type) {
@@ -171,15 +174,15 @@ var ApiCloud = React.createClass({
         if (info) {
             render =
                 React.createElement('section', {
-                        className: 'container'
-                    },
+                    className: 'container'
+                },
                     React.createElement('h3', null, this.state.title),
                     React.createElement(Form, {
-                            action: this.state.action,
-                            info: info,
-                            legend: this.state.title,
-                            onSubmit: this._onSubmit
-                        },
+                        action: this.state.action,
+                        info: info,
+                        legend: this.state.title,
+                        onSubmit: this._onSubmit
+                    },
                         forms,
                         React.createElement(Button)
                     )

@@ -14,6 +14,7 @@ var Form = React.createClass({
         if (this.props.locked) {
             return;
         }
+         console.log(this.props.info);
         if (this.props.apiSubmit) {
             Apicloud.post(this.props.action, this.props.info, function(err, res) {
                 let data = JSON.parse(res.text)

@@ -3,21 +3,22 @@ window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndex
 
 //浏览器是否支持IndexedDB
 if (window.indexedDB) {
-    deleteDB('people')
+    deleteDB('electron')
     var myDB = {
-        name: 'people',
-        version: 3,
+        name: 'electron',
+        version: 1,
         tables: [{
-            table: 'mytable',
-            dbindex: [{
-                key: 'name',
-                name: 'name',
-                format: {
-                    unique: false
-                }
-            }, {
-                    key: 'email',
-                    name: 'email',
+            table: 'article',
+            dbindex: [
+                {
+                    key: 'id',
+                    name: 'id',
+                    format: {
+                        unique: true
+                    }
+                }, {
+                    key: 'value',
+                    name: 'value',
                     format: {
                         unique: false
                     }
@@ -49,7 +50,6 @@ function openDB(myDB) {
                         objectStore.createIndex(t.key, t.name, t.format);
                     })
                 })
-                resolve('Create Object Store Success!');
             }
         }
         //DB成功打开回调
@@ -61,19 +61,17 @@ function openDB(myDB) {
         }
         //DB打开失败回调
         openRequest.onerror = function (e) {
-            console.log("Error");
             console.dir(e);
             reject('error');
         }
     }).then(function (r) {
         console.log('Done: ' + r)
-        addPerson('mytable')
-        getAll('mytable')
-        getByKey('mytable', 1)
-        getByNameIndex('mytable', 'name')
+        // addPerson('article')
+        // getAll('article')
+        // getByKey('article', 1)
     }).catch(function (reason) {
-        console.log('Failed: ' + reason);
-    });
+        console.log('Failed: ' + reason)
+    })
 }
 
 //添加一条记录
@@ -82,8 +80,8 @@ function addPerson(table) {
     var store = transaction.objectStore(table);
     //Define a person
     var data = {
-        name: 'name',
-        email: 'email',
+        id: 'name',
+        value: 'email',
         created: new Date()
     }
     var request = store.add(data);
@@ -94,6 +92,29 @@ function addPerson(table) {
     }
     request.onsuccess = function (e) {
         console.log(e);
+        console.log("Woot! Did it.");
+    }
+}
+
+//添加一条记录
+function addone(id, value) {
+    let table = 'article';
+    var transaction = DB.transaction([table], "readwrite");
+    var store = transaction.objectStore(table);
+    //Define a person
+    var data = {
+        id: id,
+        value: value,
+        created: new Date()
+    }
+    var request = store.add(data);
+    //var request = store.put(person, 2);
+    request.onerror = function (e) {
+        console.log("Error", e.target.error.name);
+        //some type of error handler
+    }
+    request.onsuccess = function (e) {
+        // console.log(e);
         console.log("Woot! Did it.");
     }
 }
@@ -118,11 +139,11 @@ function getByKey(table, key) {
 }
 
 //通过索引查询记录
-function getByNameIndex(table, name) {
+function getByNameIndex(table, name, value) {
     let transaction = DB.transaction([table], "readonly");
     let store = transaction.objectStore(table);
     let index = store.index(name);
-    let request = index.get(name);
+    let request = index.get(value);
     request.onsuccess = function (e) {
         var result = e.target.result;
         console.dir(result);

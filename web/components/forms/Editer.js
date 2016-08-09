@@ -14,7 +14,7 @@ const {
     AtomicBlockUtils,
     DraftPasteProcessor
 } = Draft;
-
+const Editer = require('../editer')
 let {
     processHTML
 } = require('draft-js/lib/DraftPasteProcessor')
@@ -225,6 +225,8 @@ class MyEditer extends React.Component {
             React.createElement(FormGroup, {
                     title: this.props.title
                 },
+
+
                 React.createElement('div', {
                         className: 'RichEditor-root'
                     },

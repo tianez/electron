@@ -25,7 +25,6 @@ const htmlToContent = require('./utils/htmlToContent')
 const draftRawToHtml = require('./utils/draftRawToHtml')
 const findEntities = require('./utils/findEntities')
 
-
 const EntityControls = require('./components/EntityControls')
 const InlineStyleControls = require('./components/InlineStyleControls')
 const BlockStyleControls = require('./components/BlockStyleControls')
@@ -41,10 +40,13 @@ const {
 
 const upload = require('./utils/upload')
 
+const FormGroup = require('../forms/FormGroup')
+
 class BasicHtmlEditor extends React.Component {
     constructor(props) {
         super(props);
         let {
+            name,
             value
         } = props;
         let delay = props.delay ? props.delay : 500
@@ -75,7 +77,7 @@ class BasicHtmlEditor extends React.Component {
         function emitHTML(editorState) {
             let raw = convertToRaw(editorState.getCurrentContent());
             let html = draftRawToHtml(raw);
-            this.props.onChange(html);
+            this.props.onChange(name,html);
         }
     }
     _handleKeyCommand(command) {
@@ -105,7 +107,7 @@ class BasicHtmlEditor extends React.Component {
             return false;
         }
     }
-    _addLineBreak( /* e */ ) {
+    _addLineBreak( /* e */) {
         let newContent, newEditorState;
         const {
             editorState
@@ -158,7 +160,7 @@ class BasicHtmlEditor extends React.Component {
         let selection = editorState.getSelection();
         for (let i = 0; i < files.length; i++) {
             console.log(files[i]);
-            getHash(files[i].path, function(e) {
+            getHash(files[i].path, function (e) {
                 console.log(e);
             })
             let type
@@ -237,42 +239,46 @@ class BasicHtmlEditor extends React.Component {
             }
         }
         return (
-            React.createElement('div', {
+            React.createElement(FormGroup, {
+                title: this.props.title
+            },
+                React.createElement('div', {
                     className: 'RichEditor-root draftjs-bhe',
                 },
-                React.createElement(BlockStyleControls, {
-                    editorState: editorState,
-                    onToggle: this.onChange
-                }),
-                React.createElement(InlineStyleControls, {
-                    editorState: editorState,
-                    onToggle: this.onChange
-                }),
-                React.createElement(EntityControls, {
-                    editorState: editorState,
-                    onChange: this.onChange
-                }),
-                React.createElement(ColorStyleControls, {
-                    editorState: editorState,
-                    onToggle: this.onChange
-                }),
-                React.createElement('div', {
+                    React.createElement(BlockStyleControls, {
+                        editorState: editorState,
+                        onToggle: this.onChange
+                    }),
+                    React.createElement(InlineStyleControls, {
+                        editorState: editorState,
+                        onToggle: this.onChange
+                    }),
+                    React.createElement(EntityControls, {
+                        editorState: editorState,
+                        onChange: this.onChange
+                    }),
+                    React.createElement(ColorStyleControls, {
+                        editorState: editorState,
+                        onToggle: this.onChange
+                    }),
+                    React.createElement('div', {
                         className: className,
                         onDrop: this._onDrop.bind(this)
                     },
-                    React.createElement(Editor, {
-                        blockStyleFn: getBlockStyle,
-                        blockRendererFn: mediaBlockRenderer,
-                        customStyleMap: styleMap,
-                        editorState: editorState,
-                        handleKeyCommand: this._handleKeyCommand.bind(this),
-                        handleReturn: this._handleReturn.bind(this),
-                        keyBindingFn: this.myKeyBindingFn.bind(this),
-                        onChange: this.onChange,
-                        placeholder: 'Tell a story...',
-                        ref: 'editor',
-                        spellCheck: true
-                    })
+                        React.createElement(Editor, {
+                            blockStyleFn: getBlockStyle,
+                            blockRendererFn: mediaBlockRenderer,
+                            customStyleMap: styleMap,
+                            editorState: editorState,
+                            handleKeyCommand: this._handleKeyCommand.bind(this),
+                            handleReturn: this._handleReturn.bind(this),
+                            keyBindingFn: this.myKeyBindingFn.bind(this),
+                            onChange: this.onChange,
+                            placeholder: 'Tell a story...',
+                            ref: 'editor',
+                            spellCheck: true
+                        })
+                    )
                 )
             )
         )
