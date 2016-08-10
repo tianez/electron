@@ -5,7 +5,14 @@ const Header = require('./header')
 const Sidebar = require('./sidebar')
 const Footer = require('./footer')
 var Layout = React.createClass({
-    componentDidMount: function() {
+    _onChange: function () {
+        let config = ConfigStore.getAll()
+        console.log(config)
+        window.document.title = config.title
+        this.setState(config)
+    },
+    componentDidMount: function () {
+        ConfigStore.addChangeListener(this._onChange);
         let filter = {
             where: {
                 state: 1
@@ -13,12 +20,15 @@ var Layout = React.createClass({
             order: ['order DESC', 'createdAt DESC'],
             limit: 100
         }
-        Apicloud.get('role', filter, function(err, res) {
+        Apicloud.get('role', filter, function (err, res) {
             let roles = JSON.parse(res.text)
             ConfigActions.update('roles', roles)
         })
     },
-    render: function() {
+    componentWillUnmount: function () {
+        ConfigStore.removeChangeListener(this._onChange);
+    },
+    render: function () {
         return (
             // React.createElement(ReactCSSTransitionGroup, {
             //         component: 'div',
@@ -29,17 +39,17 @@ var Layout = React.createClass({
             //         transitionLeaveTimeout: 500
             //     },
             React.createElement('div', {
-                    id: 'warper',
-                    className: 'pure-g',
-                },
+                id: 'warper',
+                className: 'pure-g',
+            },
                 // React.createElement('div', {
                 //         className: 'switch',
                 //         key: this.props.location.pathname
                 //     },
                 React.createElement(Header),
                 React.createElement('section', {
-                        id: 'main'
-                    },
+                    id: 'main'
+                },
                     React.createElement(Sidebar),
                     React.createElement('section', {
                         id: 'content',
