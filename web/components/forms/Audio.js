@@ -8,7 +8,6 @@ class Audio extends React.Component {
         let audio = this.refs.audio;
         // let audio = React.findDOMNode(this.refs.audio);
         // console.log(audio);
-        console.log(audio.duration);
         // audio.play()
         audio.addEventListener('timeupdate', function() { //剩余时间
             if (!isNaN(audio.duration)) {

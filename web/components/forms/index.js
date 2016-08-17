@@ -2,7 +2,7 @@
 const Form = require('./Form')
 const Input = require('./Input')
 const Textarea = require('./Textarea')
-const Editer = require('../editer')
+// const Editer = require('../editer')
 // const Editer = require('./Editer')
 const Canvas = require('./Canvas')
 const Upload = require('./Upload')
@@ -24,7 +24,7 @@ var Forms = {
     Form: Form,
     Input: Input,
     Textarea: Textarea,
-    Editer: Editer,
+    // Editer: Editer,
     Canvas: Canvas,
     Upload: Upload,
     Radio: Radio,

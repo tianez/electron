@@ -6,14 +6,7 @@ const {
 const {
     Form,
     Input,
-    Textarea,
-    Editer,
-    Radio,
-    Checkbox,
-    Upload,
-    Range,
-    Button,
-    Hidden
+    Button
 } = require('../components/forms/index')
 class Login extends React.Component {
     constructor(props) {

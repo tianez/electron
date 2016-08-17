@@ -4,7 +4,7 @@ const {
     Form,
     Input,
     Textarea,
-    Editer,
+    // Editer,
     Radio,
     Checkbox,
     Upload,
@@ -154,8 +154,8 @@ var ApiCloud = React.createClass({
                     case "image":
                         return (React.createElement(Upload, d))
                         break;
-                    case "editer":
-                        return (React.createElement(Editer, d))
+                    // case "editer":
+                    //     return (React.createElement(Editer, d))
                         break;
                     case "radio":
                         return (React.createElement(Radio, d))
